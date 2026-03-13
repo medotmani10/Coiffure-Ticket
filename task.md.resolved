@@ -1,0 +1,43 @@
+# Car Wash Station Conversion Tasks
+
+## 1. Database & Types Refactoring
+- [ ] Update [types/database.ts](file:///c:/Users/ADMIN/Downloads/Kimi_Agent_Barbershop%20Queue%20SaaS%20PRD%20%281%29/lavageticket/src/types/database.ts) (remove Barber, update Ticket, update RPC signatures)
+- [ ] Create/Update Supabase SQL migrations 
+  - [ ] Remove `barbers` table or alter constraints.
+  - [ ] Update `tickets` table (remove `barber_id`).
+  - [ ] Update RPC functions (`get_next_ticket_number`, `process_next_customer`, `create_ticket`, `get_people_ahead`) to work without `barber_id` and use simple sequential numbering (1, 2, 3...).
+
+## 2. Removing Barber & TV Features
+- [ ] Remove Barber-related components and pages ([BarberDashboard.tsx](file:///c:/Users/ADMIN/Downloads/Kimi_Agent_Barbershop%20Queue%20SaaS%20PRD%20%281%29/lavageticket/src/pages/BarberDashboard.tsx), [BarberLoginPage.tsx](file:///c:/Users/ADMIN/Downloads/Kimi_Agent_Barbershop%20Queue%20SaaS%20PRD%20%281%29/lavageticket/src/pages/BarberLoginPage.tsx), [BarberInstallPrompt.tsx](file:///c:/Users/ADMIN/Downloads/Kimi_Agent_Barbershop%20Queue%20SaaS%20PRD%20%281%29/lavageticket/src/components/BarberInstallPrompt.tsx)).
+- [ ] Remove TV-related components and pages ([TVDisplayPage.tsx](file:///c:/Users/ADMIN/Downloads/Kimi_Agent_Barbershop%20Queue%20SaaS%20PRD%20%281%29/lavageticket/src/pages/TVDisplayPage.tsx)).
+- [ ] Update [App.tsx](file:///c:/Users/ADMIN/Downloads/Kimi_Agent_Barbershop%20Queue%20SaaS%20PRD%20%281%29/lavageticket/src/App.tsx) to remove Barber and TV routes entirely.
+
+## 3. Customer Booking Page Update
+- [ ] Refactor [CustomerBookingPage.tsx](file:///c:/Users/ADMIN/Downloads/Kimi_Agent_Barbershop%20Queue%20SaaS%20PRD%20%281%29/lavageticket/src/pages/CustomerBookingPage.tsx)
+  - [ ] Remove barber selection logic.
+  - [ ] Update queue calculation to be station-wide.
+  - [ ] Simplify ticket generation (1, 2, 3...).
+  - [ ] Update texts and icons to Car Wash theme (e.g., Car instead of Scissors).
+
+## 4. Admin Dashboard Update
+- [ ] Refactor [AdminDashboard.tsx](file:///c:/Users/ADMIN/Downloads/Kimi_Agent_Barbershop%20Queue%20SaaS%20PRD%20%281%29/lavageticket/src/pages/AdminDashboard.tsx)
+  - [ ] Remove barber management tabs/sections.
+  - [ ] Update queue management to be a single unified list.
+  - [ ] Update "Process Next Customer" logic for a single line.
+- [ ] Refactor [AdminSettingsPage.tsx](file:///c:/Users/ADMIN/Downloads/Kimi_Agent_Barbershop%20Queue%20SaaS%20PRD%20%281%29/lavageticket/src/pages/AdminSettingsPage.tsx)
+  - [ ] Remove barber settings.
+- [ ] Refactor [TicketStatusPage.tsx](file:///c:/Users/ADMIN/Downloads/Kimi_Agent_Barbershop%20Queue%20SaaS%20PRD%20%281%29/lavageticket/src/pages/TicketStatusPage.tsx)
+  - [ ] Remove barber references.
+  - [ ] Update theming.
+
+## 5. UI/UX & Theming (Car Wash Theme)
+- [ ] Update global colors and styles in [index.css](file:///c:/Users/ADMIN/Downloads/Kimi_Agent_Barbershop%20Queue%20SaaS%20PRD%20%281%29/lavageticket/src/index.css) and [tailwind.config.js](file:///c:/Users/ADMIN/Downloads/Kimi_Agent_Barbershop%20Queue%20SaaS%20PRD%20%281%29/lavageticket/tailwind.config.js) (e.g., from yellow/black to blue/water/clean theme).
+- [ ] Update Landing Page texts and imagery.
+- [ ] Replace Scissors/Barber icons with Car/Wash/Water icons across the app.
+- [ ] Update translations/texts from "حلاق" (Barber) to "محطة غسيل" (Car Wash) and "غاسل" or remove employee selection entirely.
+
+## 6. Verification
+- [ ] Test Customer ticket creation flow.
+- [ ] Test Admin ticket processing flow.
+- [ ] Verify no barber/TV code is left.
+- [ ] Verify UI aesthetics.

@@ -1,0 +1,19 @@
+{
+    "name": "Lavage Station",
+    "short_name": "Lavage Station",
+    "description": "نظام إدارة محطة غسيل السيارات الذكي",
+    "theme_color": "#09090b",
+    "background_color": "#09090b",
+    "display": "standalone",
+    "orientation": "portrait",
+    "scope": "/",
+    "start_url": "/",
+    "icons": [
+        {
+            "src": "app-icon.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any"
+        }
+    ]
+}

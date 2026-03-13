@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="ar" class="dark">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Noto+Kufi+Arabic:wght@400;500;600;700;800;900&family=Cairo:wght@400;500;600;700;800;900&display=swap"
+    rel="stylesheet">
+  <meta name="description"
+    content="نظام رقمي لقوائم الانتظار في محطات غسيل السيارات — زبائنك يعرفون دورهم من هواتفهم" />
+  <meta name="theme-color" content="#09090b" />
+  <link id="app-icon" rel="icon" type="image/png" href="/app-icon.png" />
+  <link id="app-apple-icon" rel="apple-touch-icon" href="/app-icon.png">
+  <title id="app-title">Lavage Ticket — نظام طابور غسيل السيارات</title>
+
+  <script>
+    window.addEventListener('DOMContentLoaded', function () {
+      const hostname = window.location.hostname;
+      const isSuperAdmin = hostname.includes('superadmin');
+      const isAdmin = hostname.includes('admin') && !isSuperAdmin;
+
+      // Update Title
+      if (isSuperAdmin) {
+        const titleEl = document.getElementById('app-title');
+        if (titleEl) titleEl.textContent = 'Lavage Control — الإدارة العامة';
+      } else if (isAdmin) {
+        const titleEl = document.getElementById('app-title');
+        if (titleEl) titleEl.textContent = 'Lavage Station — لوحة الإدارة';
+      }
+
+      // Update Manifest
+      let manifestUrl = null;
+      if (isSuperAdmin) manifestUrl = '/manifest-superadmin.json';
+      else if (isAdmin) manifestUrl = '/manifest-admin.json';
+      else if (hostname.includes('costumer') || hostname.includes('customer')) manifestUrl = '/manifest-customer.json';
+
+      // Only inject manifest if we have a specific URL (subdomains)
+      if (manifestUrl) {
+        let manifestLink = document.querySelector('link[rel="manifest"]');
+        if (!manifestLink) {
+          manifestLink = document.createElement('link');
+          manifestLink.rel = 'manifest';
+          document.head.appendChild(manifestLink);
+        }
+        manifestLink.href = manifestUrl;
+      }
+    });
+  </script>
+</head>
+
+<body>
+  <div id="root"></div>
+  <script type="module" src="/src/main.tsx"></script>
+</body>
+
+</html>

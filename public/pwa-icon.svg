@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Background circle -->
+  <circle cx="256" cy="256" r="256" fill="#0a0a0f"/>
+
+  <!-- Blue glow ring -->
+  <circle cx="256" cy="256" r="220" fill="none" stroke="#3b82f6" stroke-width="6" opacity="0.3"/>
+
+  <!-- Water droplet body (car wash symbol) -->
+  <path d="M256 120 C256 120, 170 230, 170 300 C170 348 208 385 256 385 C304 385 342 348 342 300 C342 230 256 120 256 120Z"
+        fill="url(#dropGrad)" />
+
+  <!-- Car silhouette inside droplet -->
+  <g transform="translate(206, 265) scale(0.2)">
+    <path d="M80 0 L400 0 L460 100 L540 100 L540 220 L480 220 L480 200 L100 200 L100 220 L40 220 L40 100 L80 0Z
+             M120 160 C120 182 138 200 160 200 C182 200 200 182 200 160 C200 138 182 120 160 120 C138 120 120 138 120 160Z
+             M360 160 C360 182 378 200 400 200 C422 200 440 182 440 160 C440 138 422 120 400 120 C378 120 360 138 360 160Z"
+          fill="#0a0a0f" opacity="0.6"/>
+  </g>
+
+  <!-- Water drops / bubbles -->
+  <circle cx="196" cy="210" r="7" fill="#93c5fd" opacity="0.8"/>
+  <circle cx="316" cy="185" r="5" fill="#60a5fa" opacity="0.6"/>
+  <circle cx="230" cy="165" r="4" fill="#bfdbfe" opacity="0.7"/>
+  <circle cx="290" cy="200" r="6" fill="#93c5fd" opacity="0.5"/>
+
+  <!-- Gradients -->
+  <defs>
+    <linearGradient id="dropGrad" x1="170" y1="120" x2="342" y2="385" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#60a5fa"/>
+      <stop offset="100%" stop-color="#1d4ed8"/>
+    </linearGradient>
+  </defs>
+</svg>
