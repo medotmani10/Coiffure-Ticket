@@ -45,7 +45,7 @@ serve(async (req: Request) => {
         // Configure web-push
         try {
             webpush.setVapidDetails(
-                'mailto:admin@lavageticket.com',
+                'mailto:admin@coiffureticket.com',
                 publicKey,
                 privateKey
             );
@@ -83,7 +83,7 @@ serve(async (req: Request) => {
 
         // Payload to send
         const notificationPayload = JSON.stringify({
-            title: title || 'LavageTicket Update',
+            title: title || 'CoiffureTicket Update',
             body: body || 'Your ticket status has been updated.',
             url: url || '/',
             icon: '/pwa-icon.svg'

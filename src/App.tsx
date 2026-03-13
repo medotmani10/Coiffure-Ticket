@@ -63,7 +63,7 @@ function App() {
 
   // ---------------------------------------------------------------------------
   // ---------------------------------------------------------------------------
-  // CUSTOMER ROUTES (costumer-lavageticket.vercel.app)
+  // CUSTOMER ROUTES (customer-coiffureticket.vercel.app)
   // ---------------------------------------------------------------------------
   if (isCustomer) {
     return (
@@ -89,7 +89,7 @@ function App() {
   }
 
   // ---------------------------------------------------------------------------
-  // MAIN ROUTE (lavageticket.vercel.app)
+  // MAIN ROUTE (coiffureticket.vercel.app)
   // ---------------------------------------------------------------------------
   return (
     <BrowserRouter>

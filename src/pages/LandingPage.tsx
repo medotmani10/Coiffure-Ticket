@@ -35,7 +35,7 @@ export default function LandingPage() {
   }, []);
 
   const handleAppDownload = () => {
-    window.location.href = 'https://admin-lavageticket.vercel.app';
+    window.location.href = 'https://admin-coiffureticket.vercel.app';
   };
 
   const stat1 = useCountUp(500, 2000, statsVisible);

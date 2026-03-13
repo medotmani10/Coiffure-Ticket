@@ -20,8 +20,8 @@ export default defineConfig({
       },
       includeAssets: ['pwa-icon.svg'],
       manifest: {
-        name: "LavageTicket",
-        short_name: "LavageTicket",
+        name: "CoiffureTicket",
+        short_name: "CoiffureTicket",
         theme_color: "#000000",
         background_color: "#000000",
         display: "standalone",

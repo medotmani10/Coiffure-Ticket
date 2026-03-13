@@ -9,5 +9,5 @@ export function getCustomerBaseUrl() {
   if (typeof window === 'undefined') return '';
   const host = window.location.host.replace('admin-', '').replace('admin.', '');
   if (host.includes('localhost') || host.includes('127.0.0')) return `${window.location.protocol}//${host}`;
-  return `https://costumer-lavageticket.vercel.app`;
+  return `https://customer-coiffureticket.vercel.app`;
 }

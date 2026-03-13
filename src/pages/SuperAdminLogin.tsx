@@ -89,7 +89,7 @@ export default function SuperAdminLogin() {
                                     type="email"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
-                                    placeholder="admin@lavageticket.com"
+                                    placeholder="admin@coiffureticket.com"
                                     className="rounded-2xl h-14 bg-black/50 border-zinc-800 text-white focus-visible:ring-blue-500 focus-visible:border-blue-500 pl-4 pr-4 transition-all"
                                     dir="ltr"
                                     disabled={loading}
