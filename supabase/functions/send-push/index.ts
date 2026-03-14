@@ -3,24 +3,50 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.0";
 // Import edge compatible web-push (fixed typo denonext)
 import * as webpush from "https://esm.sh/web-push@3.6.6?target=denonext";
 
-// CORS headers
 const corsHeaders = {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+    'Access-Control-Max-Age': '86400',
 };
 
 serve(async (req: Request) => {
-    // Handle CORS preflight
     if (req.method === 'OPTIONS') {
-        return new Response('ok', { headers: corsHeaders });
+        return new Response(null, { headers: corsHeaders, status: 204 });
     }
 
     try {
-        // Initialize Supabase Client
-        const supabaseAdmin = createClient(
-            Deno.env.get('SUPABASE_URL') ?? '',
-            Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-        );
+        const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? Deno.env.get('PROJECT_URL') ?? '';
+        const serviceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? Deno.env.get('SERVICE_ROLE_KEY') ?? '';
+
+        if (!supabaseUrl || !serviceRoleKey) {
+            return new Response(JSON.stringify({ error: 'Missing server configuration' }), {
+                headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+                status: 500,
+            });
+        }
+
+        const authHeader = req.headers.get('authorization') ?? req.headers.get('Authorization') ?? '';
+        const jwt = authHeader.startsWith('Bearer ') ? authHeader.slice('Bearer '.length) : '';
+
+        if (!jwt) {
+            return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+                headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+                status: 401,
+            });
+        }
+
+        const supabaseAdmin = createClient(supabaseUrl, serviceRoleKey);
+        const { data: userData, error: userErr } = await supabaseAdmin.auth.getUser(jwt);
+
+        if (userErr || !userData?.user) {
+            return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+                headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+                status: 401,
+            });
+        }
+
+        const callerUserId = userData.user.id;
 
         // Fetch VAPID Keys from the app_settings table
         const { data: settingsData, error: settingsError } = await supabaseAdmin
@@ -57,13 +83,51 @@ serve(async (req: Request) => {
             });
         }
 
-        // Parse Request Body
         const { ticketId, title, body, url } = await req.json();
 
         if (!ticketId) {
             return new Response(JSON.stringify({ error: 'ticketId is required' }), {
                 headers: { ...corsHeaders, 'Content-Type': 'application/json' },
                 status: 400,
+            });
+        }
+
+        const { data: ticketRow, error: ticketErr } = await supabaseAdmin
+            .from('tickets')
+            .select('id, shop_id, barber_id')
+            .eq('id', ticketId)
+            .single();
+
+        if (ticketErr || !ticketRow) {
+            return new Response(JSON.stringify({ error: 'Ticket not found' }), {
+                headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+                status: 404,
+            });
+        }
+
+        const { data: shopRow } = await supabaseAdmin
+            .from('shops')
+            .select('owner_id')
+            .eq('id', ticketRow.shop_id)
+            .single();
+
+        const isOwner = Boolean(shopRow?.owner_id && shopRow.owner_id === callerUserId);
+
+        const { data: barberRow } = await supabaseAdmin
+            .from('profiles')
+            .select('id')
+            .eq('id', callerUserId)
+            .eq('role', 'barber')
+            .eq('shop_id', ticketRow.shop_id)
+            .eq('is_active', true)
+            .single();
+
+        const isAssignedBarber = Boolean(barberRow?.id && ticketRow.barber_id && ticketRow.barber_id === callerUserId);
+
+        if (!isOwner && !isAssignedBarber) {
+            return new Response(JSON.stringify({ error: 'Forbidden' }), {
+                headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+                status: 403,
             });
         }
 
