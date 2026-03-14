@@ -62,7 +62,7 @@ export function ThermalTicket({
         >
             {/* Header: Shop Name & Time */}
             <div style={{ marginBottom: '5px' }}>
-                <div style={{ fontSize: '32px', fontWeight: 'bold', color: '#000', marginBottom: '2px' }}>
+                <div style={{ fontSize: '22px', fontWeight: 'bold', color: '#000', marginBottom: '2px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                     {shopName}
                 </div>
                 <div style={{ fontSize: '12px', color: '#000', fontWeight: 'bold' }}>
@@ -106,20 +106,16 @@ export function ThermalTicket({
                 marginTop: '5px'
             }}>
                 {/* Details */}
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', textAlign: 'right', flex: 1 }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', textAlign: 'right', flex: 1 }}>
                     <div style={{ fontSize: '15px', fontWeight: 'bold', color: '#000' }}>
                         الاسم: <span style={{ fontWeight: 'bold', fontSize: '18px' }}>{customerName}</span>
                     </div>
-                    {barberName && (
-                        <div style={{ fontSize: '15px', fontWeight: 'bold', color: '#000' }}>
-                            الحلاق: <span style={{ fontWeight: 'bold', fontSize: '18px' }}>{barberName}</span>
-                        </div>
-                    )}
-                    {!barberName && (
-                        <div style={{ fontSize: '14px', fontWeight: 'bold', color: '#000' }}>
-                            الأشخاص: <span style={{ fontWeight: 'bold' }}>{peopleCount}</span>
-                        </div>
-                    )}
+                    <div style={{ fontSize: '15px', fontWeight: 'bold', color: '#000' }}>
+                        الحلاق: <span style={{ fontWeight: 'bold', fontSize: '18px' }}>{barberName || '-'}</span>
+                    </div>
+                    <div style={{ fontSize: '15px', fontWeight: 'bold', color: '#000' }}>
+                        عدد الاشخاص: <span style={{ fontWeight: 'bold', fontSize: '18px' }}>{peopleCount}</span>
+                    </div>
                 </div>
 
                 {/* QR Code */}

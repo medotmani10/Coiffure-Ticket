@@ -5,7 +5,6 @@ import type { Profile, Shop, Ticket } from '@/types/database';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Switch } from '@/components/ui/switch';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
@@ -125,7 +124,7 @@ export default function AdminDashboard() {
   const [manualName, setManualName] = useState('');
   const [manualPhone, setManualPhone] = useState('');
   const [manualCarCount, setManualCarCount] = useState(1);
-  const [manualBarberId, setManualBarberId] = useState<string>('any');
+  const [manualBarberId, setManualBarberId] = useState<string>('');
   const [selectedTicketDetails, setSelectedTicketDetails] = useState<Ticket | null>(null);
   const [autoPrint, setAutoPrint] = useState(true);
   const [soundEnabled, setSoundEnabled] = useState(true);
@@ -264,7 +263,10 @@ export default function AdminDashboard() {
       return;
     }
 
-    const finalBarberId = manualBarberId === 'any' ? null : manualBarberId;
+    if (!manualBarberId) {
+      toast.error('يرجى اختيار الحلاق');
+      return;
+    }
 
     // Use atomic create_ticket RPC to avoid race conditions on ticket_number
     const { data: ticketData, error } = await supabase.rpc('create_ticket', {
@@ -273,7 +275,7 @@ export default function AdminDashboard() {
       p_phone: manualPhone.trim() || '',
       p_people: manualCarCount,
       p_session_id: `manual_${Date.now()}`,
-      p_barber_id: finalBarberId,
+      p_barber_id: manualBarberId,
     });
 
     if (error) {
@@ -289,7 +291,9 @@ export default function AdminDashboard() {
 
     if (autoPrint) {
       // Calculate people ahead for the new ticket (not including this new ticket)
-      const peopleAheadCount = tickets.reduce((acc, t) => acc + (t.people_count || 1), 0);
+      const peopleAheadCount = tickets
+        .filter((t) => t.status === 'waiting' && t.barber_id === manualBarberId)
+        .reduce((acc, t) => acc + (t.people_count || 1), 0);
       printThermalTicket({
         ticketNumber: ticketNumber,
         ticketId: insertedTicket.id,
@@ -307,7 +311,7 @@ export default function AdminDashboard() {
     setManualName('');
     setManualPhone('');
     setManualCarCount(1);
-    setManualBarberId('any');
+    setManualBarberId('');
   };
 
   const handleNextCustomer = async () => {
@@ -377,13 +381,18 @@ export default function AdminDashboard() {
   const servingCount = servingTickets.reduce((acc, t) => acc + (t.people_count || 1), 0);
 
   const sumPeople = (list: Ticket[]) => list.reduce((acc, t) => acc + (t.people_count || 1), 0);
-  const generalWaiting = waitingTickets.filter((t) => !t.barber_id);
-  const generalServing = servingTickets.filter((t) => !t.barber_id);
+  const waitingPeopleByBarberId = new Map<string, number>();
+  for (const t of waitingTickets) {
+    if (!t.barber_id) continue;
+    waitingPeopleByBarberId.set(t.barber_id, (waitingPeopleByBarberId.get(t.barber_id) ?? 0) + (t.people_count || 1));
+  }
+
   const barberGroups = barbers.map((b) => {
     const serving = servingTickets.find((t) => t.barber_id === b.id) || null;
     const waiting = waitingTickets.filter((t) => t.barber_id === b.id);
     return { barber: b, serving, waiting };
   });
+
 
   /* ─── STATUS GUARD ─── */
   if (shop.status === 'pending') {
@@ -655,21 +664,46 @@ export default function AdminDashboard() {
 
                 <div className="space-y-2 border-t border-zinc-800 pt-4 mt-2">
                   <Label className="flex items-center gap-2 text-zinc-300 text-sm font-bold">
-                    <Scissors className="w-4 h-4 text-amber-500" /> تعيين لحلاق (اختياري)
+                    <Scissors className="w-4 h-4 text-amber-500" /> اختر الحلاق
                   </Label>
-                  <Select value={manualBarberId} onValueChange={setManualBarberId}>
-                    <SelectTrigger className="w-full rounded-xl h-12 bg-black border-zinc-700 text-white focus-visible:ring-amber-500">
-                      <SelectValue placeholder="عام / أي حلاق" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="any">عام / أي حلاق</SelectItem>
-                      {barbers.map((b) => (
-                        <SelectItem key={b.id} value={b.id} disabled={!b.is_active}>
-                          {b.full_name?.trim() || 'حلاق'}{b.is_active ? '' : ' (غير نشط)'}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+
+                  {barbers.length === 0 ? (
+                    <div className="rounded-xl border border-dashed border-zinc-800 bg-black/30 p-6 text-center text-zinc-500 text-sm font-semibold">
+                      لا يوجد حلاقون بعد
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      {barbers.map((b) => {
+                        const isSelected = manualBarberId === b.id;
+                        const waitingPeople = waitingPeopleByBarberId.get(b.id) ?? 0;
+                        return (
+                          <button
+                            key={b.id}
+                            type="button"
+                            onClick={() => setManualBarberId(b.id)}
+                            disabled={!b.is_active}
+                            className={cn(
+                              'rounded-2xl border p-4 text-right transition-all active:scale-[0.99]',
+                              !b.is_active ? 'opacity-50 cursor-not-allowed border-zinc-800 bg-black/20' : (isSelected ? 'border-amber-500/50 bg-amber-500/10' : 'border-zinc-800 bg-black/40 hover:border-amber-500/30 hover:bg-zinc-900/40')
+                            )}
+                          >
+                            <div className="flex items-start justify-between gap-3">
+                              <div className="min-w-0">
+                                <div className="font-black text-white truncate">{b.full_name?.trim() || 'حلاق'}</div>
+                                <div className="text-xs text-zinc-500 font-semibold mt-1">في الانتظار: {waitingPeople} شخص</div>
+                              </div>
+                              <div className={cn(
+                                'shrink-0 rounded-xl px-3 py-1 text-xs font-black border',
+                                isSelected ? 'bg-amber-500 text-black border-amber-400' : 'bg-zinc-900 text-zinc-200 border-zinc-800'
+                              )}>
+                                {isSelected ? 'محدد' : 'اختيار'}
+                              </div>
+                            </div>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  )}
                 </div>
 
                 {/* Print toggle */}
@@ -732,109 +766,6 @@ export default function AdminDashboard() {
           </div>
 
           <div className="space-y-6">
-            <div className="rounded-[2rem] border border-zinc-800 bg-black/40 overflow-hidden">
-              <div className="px-6 py-5 border-b border-zinc-800 flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center">
-                    <Scissors className="w-5 h-5 text-amber-400" />
-                  </div>
-                  <div>
-                    <div className="text-white font-black text-lg">عام / أي حلاق</div>
-                    <div className="text-xs text-zinc-500 font-semibold">غير معين لحلاق محدد</div>
-                  </div>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="bg-zinc-900 border border-zinc-800 text-zinc-200 text-xs font-black px-2.5 py-1 rounded-full">
-                    انتظار: {sumPeople(generalWaiting)}
-                  </span>
-                  <span className="bg-zinc-900 border border-zinc-800 text-zinc-200 text-xs font-black px-2.5 py-1 rounded-full">
-                    في الخدمة: {sumPeople(generalServing)}
-                  </span>
-                </div>
-              </div>
-
-              <div className="p-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <div className="text-zinc-300 font-black">في الخدمة</div>
-                    <div className="text-xs text-zinc-500 font-bold">{generalServing.length}</div>
-                  </div>
-                  {generalServing.length === 0 ? (
-                    <div className="flex flex-col items-center justify-center py-10 border border-zinc-800/50 rounded-2xl bg-zinc-950/40 border-dashed">
-                      <User className="w-10 h-10 text-zinc-700 mb-2" />
-                      <p className="text-zinc-500 text-sm font-medium">لا يوجد</p>
-                    </div>
-                  ) : (
-                    <div className="space-y-3">
-                      {generalServing.map((t) => (
-                        <div key={t.id} className="rounded-2xl border border-amber-500/20 bg-amber-500/5 p-5 cursor-pointer" onClick={() => setSelectedTicketDetails(t)}>
-                          <div className="flex justify-between items-start mb-2">
-                            <div className="inline-flex items-center gap-2 bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-black px-3 py-1 rounded-full">
-                              <span className="w-1.5 h-1.5 bg-amber-400 rounded-full animate-pulse" /> يخدم الآن
-                            </div>
-                            <p className="text-4xl font-black text-white">#{t.ticket_number}</p>
-                          </div>
-                          <div className="text-right">
-                            <p className="text-zinc-300 font-bold text-lg">{t.customer_name}</p>
-                            <p className="text-zinc-500 text-sm">{new Date(t.created_at).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}</p>
-                          </div>
-                          <div className="mt-4">
-                            <Button
-                              onClick={(e) => { e.stopPropagation(); finishTicket(t.id); }}
-                              variant="outline"
-                              className="w-full rounded-xl h-11 bg-amber-500/10 text-amber-400 border-amber-500/20 hover:bg-amber-500/20 font-black"
-                            >
-                              <CheckCircle className="w-4 h-4 mr-2" /> إنهاء
-                            </Button>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <div className="text-zinc-300 font-black">انتظار</div>
-                    <div className="text-xs text-zinc-500 font-bold">{generalWaiting.length}</div>
-                  </div>
-                  {generalWaiting.length === 0 ? (
-                    <div className="flex flex-col items-center justify-center py-10 border border-zinc-800/50 rounded-2xl bg-zinc-950/40 border-dashed">
-                      <Users className="w-10 h-10 text-zinc-700 mb-2" />
-                      <p className="text-zinc-500 text-sm font-medium">لا يوجد</p>
-                    </div>
-                  ) : (
-                    <div className="space-y-3">
-                      {generalWaiting.map((t, i) => (
-                        <div key={t.id} onClick={() => setSelectedTicketDetails(t)} className={cn(
-                          'flex items-center justify-between p-4 rounded-xl border border-zinc-800',
-                          'bg-black hover:bg-zinc-900/80 hover:border-amber-500/30 transition-all duration-200 cursor-pointer group',
-                        )}>
-                          <div className="flex items-center gap-4">
-                            <span className="w-11 h-11 flex items-center justify-center rounded-xl bg-zinc-900 border border-zinc-800 font-black text-zinc-500 text-base group-hover:border-amber-500/30 group-hover:text-amber-500 transition-colors shrink-0">
-                              {i + 1}
-                            </span>
-                            <div>
-                              <p className="font-black text-white text-lg leading-tight group-hover:text-amber-400 transition-colors">
-                                <span className="text-zinc-600 text-base ml-1">#</span>{t.ticket_number}
-                              </p>
-                              <p className="text-sm text-zinc-500 truncate max-w-[150px] sm:max-w-[200px]">{t.customer_name}</p>
-                            </div>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <button onClick={(e) => { e.stopPropagation(); cancelTicket(t.id); }}
-                              className="w-10 h-10 rounded-xl flex items-center justify-center text-zinc-600 hover:text-red-400 hover:bg-red-500/10 transition-all border border-transparent hover:border-red-500/20" title="إلغاء التذكرة">
-                              <X className="w-4 h-4" />
-                            </button>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-
             {barberGroups.map(({ barber, serving, waiting }) => (
               <div key={barber.id} className="rounded-[2rem] border border-zinc-800 bg-black/40 overflow-hidden">
                 <div className="px-6 py-5 border-b border-zinc-800 flex items-center justify-between">
