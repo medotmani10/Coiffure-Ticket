@@ -16,6 +16,12 @@ export default function BarberLoginPage() {
   const [password, setPassword] = useState('');
 
   useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const prefillSlug = params.get('shop')?.trim();
+    if (prefillSlug) {
+      setShopSlug((prev) => prev || prefillSlug);
+    }
+
     supabase.auth.getSession().then(async ({ data: { session } }) => {
       if (!session?.user) return;
       const { data: profile, error } = await supabase

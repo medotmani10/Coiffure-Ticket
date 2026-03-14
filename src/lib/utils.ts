@@ -11,3 +11,10 @@ export function getCustomerBaseUrl() {
   if (host.includes('localhost') || host.includes('127.0.0')) return `${window.location.protocol}//${host}`;
   return `https://customer-coiffureticket.vercel.app`;
 }
+
+export function getBarberBaseUrl() {
+  if (typeof window === 'undefined') return '';
+  const host = window.location.host.replace('admin-', '').replace('admin.', '');
+  if (host.includes('localhost') || host.includes('127.0.0')) return `${window.location.protocol}//${host}`;
+  return `https://coiffure-coiffureticket.vercel.app`;
+}

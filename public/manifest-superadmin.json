@@ -1,7 +1,7 @@
 {
-    "name": "Lavage Control",
-    "short_name": "Lavage Control",
-    "description": "لوحة الإدارة العامة لنظام Lavage Ticket",
+    "name": "Coiffure Control",
+    "short_name": "Coiffure Control",
+    "description": "لوحة الإدارة العامة لنظام Couffure Ticket",
     "theme_color": "#09090b",
     "background_color": "#09090b",
     "display": "standalone",
