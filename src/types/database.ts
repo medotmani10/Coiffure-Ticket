@@ -113,13 +113,14 @@ export interface Shop {
 }
 
 export interface Profile {
-  id: string
-  shop_id: string
-  full_name: string | null
-  role: 'admin' | 'barber'
-  is_active: boolean
-  created_at: string
-  updated_at: string
+  id: string; // Matches auth.users.id
+  shop_id: string;
+  role: 'admin' | 'barber';
+  full_name?: string | null;
+  phone_number?: string | null;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface Ticket {
