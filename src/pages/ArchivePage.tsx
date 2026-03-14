@@ -139,6 +139,7 @@ export default function ArchivePage() {
   const filteredTickets = tickets.filter(ticket =>
     ticket.customer_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     ticket.ticket_number.toString().includes(searchQuery) ||
+    (ticket.ticket_code ?? '').toLowerCase().includes(searchQuery.toLowerCase()) ||
     ticket.phone_number.includes(searchQuery)
   );
 
@@ -284,7 +285,7 @@ export default function ArchivePage() {
                         ? 'bg-gradient-to-br from-green-500/20 to-black border-green-500/30 text-green-400 group-hover:shadow-[0_0_15px_rgba(34,197,94,0.2)]'
                         : 'bg-gradient-to-br from-red-500/20 to-black border-red-500/30 text-red-500 group-hover:shadow-[0_0_15px_rgba(239,68,68,0.2)]'
                         }`}>
-                        <span className="text-2xl font-black">#{ticket.ticket_number}</span>
+                        <span className="text-2xl font-black">{ticket.ticket_code ?? `#${ticket.ticket_number}`}</span>
                       </div>
                       <div>
                         <h4 className="font-bold text-xl text-white group-hover:text-amber-400 transition-colors">{ticket.customer_name}</h4>

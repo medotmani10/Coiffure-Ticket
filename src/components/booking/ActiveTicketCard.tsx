@@ -29,7 +29,7 @@ export default function ActiveTicketCard({ ticket, peopleAhead, onCancel }: Prop
                 <div>
                     <p className="text-xs text-zinc-500 uppercase tracking-widest mb-1">رقم تذكرتك</p>
                     <p className={`text-7xl font-black tracking-tight ${isServing ? 'text-green-400' : 'text-amber-400'}`}>
-                        {ticket.ticket_number}
+                        {ticket.ticket_code ?? ticket.ticket_number}
                     </p>
                 </div>
 

@@ -286,9 +286,9 @@ export default function AdminDashboard() {
     }
 
     const insertedTicket = (Array.isArray(ticketData) ? ticketData[0] : ticketData) as Ticket;
-    const ticketNumber = insertedTicket.ticket_number;
+    const ticketCode = insertedTicket.ticket_code ?? `#${insertedTicket.ticket_number}`;
 
-    toast.success(`تم إنشاء التذكرة #${ticketNumber}`);
+    toast.success(`تم إنشاء التذكرة ${ticketCode}`);
 
     if (autoPrint) {
       // Calculate people ahead for the new ticket (not including this new ticket)
@@ -296,7 +296,8 @@ export default function AdminDashboard() {
         .filter((t) => t.status === 'waiting' && t.barber_id === manualBarberId)
         .reduce((acc, t) => acc + (t.people_count || 1), 0);
       printThermalTicket({
-        ticketNumber: ticketNumber,
+        ticketNumber: insertedTicket.ticket_number,
+        ticketCode: insertedTicket.ticket_code ?? undefined,
         ticketId: insertedTicket.id,
         customerName: insertedTicket.customer_name || customerLabel,
         barberName: insertedTicket.barber_name || undefined,
@@ -323,8 +324,8 @@ export default function AdminDashboard() {
       if (error) {
         toast.info('لا يوجد زبائن في الانتظار');
       } else if (data && Array.isArray(data) && data.length > 0) {
-        const r = data[0] as { customer_name: string; ticket_number: number };
-        toast.success(`تفضل الزبون: ${r.customer_name} — #${r.ticket_number}`);
+        const r = data[0] as { customer_name: string; ticket_number: number; ticket_code?: string | null };
+        toast.success(`تفضل الزبون: ${r.customer_name} — ${r.ticket_code ?? '#' + r.ticket_number}`);
       } else {
         toast.info('لا يوجد زبائن في الانتظار');
       }
@@ -811,7 +812,7 @@ export default function AdminDashboard() {
                           <div className="inline-flex items-center gap-2 bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-black px-3 py-1 rounded-full">
                             <span className="w-1.5 h-1.5 bg-amber-400 rounded-full animate-pulse" /> يخدم الآن
                           </div>
-                          <p className="text-4xl font-black text-white">#{serving.ticket_number}</p>
+                          <p className="text-4xl font-black text-white">{serving.ticket_code ?? `#${serving.ticket_number}`}</p>
                         </div>
                         <div className="text-right">
                           <p className="text-zinc-300 font-bold text-lg">{serving.customer_name}</p>
@@ -860,7 +861,7 @@ export default function AdminDashboard() {
                               </span>
                               <div>
                                 <p className="font-black text-white text-lg leading-tight group-hover:text-amber-400 transition-colors">
-                                  <span className="text-zinc-600 text-base ml-1">#</span>{t.ticket_number}
+                                  <span className="text-zinc-600 text-base ml-1">{t.ticket_code ? '' : '#'}</span>{t.ticket_code ?? t.ticket_number}
                                 </p>
                                 <p className="text-sm text-zinc-500 truncate max-w-[150px] sm:max-w-[200px]">{t.customer_name}</p>
                               </div>
@@ -889,7 +890,7 @@ export default function AdminDashboard() {
           <DialogHeader>
             <DialogTitle className="text-xl font-black text-right text-amber-500">تفاصيل الزبون</DialogTitle>
             <DialogDescription className="text-zinc-400 text-sm text-right mt-1">
-              رقم التذكرة: {selectedTicketDetails ? selectedTicketDetails.ticket_number : ''}
+              رقم التذكرة: {selectedTicketDetails ? (selectedTicketDetails.ticket_code ?? selectedTicketDetails.ticket_number) : ''}
             </DialogDescription>
           </DialogHeader>
           {selectedTicketDetails && (
@@ -937,6 +938,7 @@ export default function AdminDashboard() {
                   const peopleAheadCount = tickets.slice(0, index).reduce((acc, t) => acc + (t.people_count || 1), 0);
                   printThermalTicket({
                     ticketNumber: selectedTicketDetails.ticket_number,
+                    ticketCode: selectedTicketDetails.ticket_code ?? undefined,
                     ticketId: selectedTicketDetails.id,
                     customerName: selectedTicketDetails.customer_name || 'عميل',
                     shopName: shop.name || '',

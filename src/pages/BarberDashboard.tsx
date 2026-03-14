@@ -10,6 +10,7 @@ import { toast } from 'sonner';
 type NextTicketResult = {
   ticket_id: string;
   ticket_number: number;
+  ticket_code?: string | null;
   customer_name: string;
   people_count: number;
   barber_name: string | null;
@@ -157,7 +158,7 @@ export default function BarberDashboard() {
         toast.info('لا يوجد زبائن في الانتظار');
         return;
       }
-      toast.success(`تفضل الزبون: ${row.customer_name} — #${row.ticket_number}`);
+      toast.success(`تفضل الزبون: ${row.customer_name} — ${row.ticket_code ?? '#' + row.ticket_number}`);
       await loadTickets();
     } catch {
       toast.error('حدث خطأ');
@@ -252,7 +253,7 @@ export default function BarberDashboard() {
             <div className="rounded-[2rem] border border-zinc-900 bg-black p-8 text-center">
               <div className="text-zinc-500 text-xs font-bold mb-3">رقم التذكرة</div>
               <div className="text-8xl sm:text-9xl font-black tracking-tighter leading-none">
-                {serving ? `#${serving.ticket_number}` : '—'}
+                {serving ? (serving.ticket_code ?? `#${serving.ticket_number}`) : '—'}
               </div>
               <div className="mt-4 text-zinc-500 font-semibold">
                 {serving ? serving.customer_name : 'لا يوجد زبون حالياً'}
@@ -309,7 +310,7 @@ export default function BarberDashboard() {
                         {idx + 1}
                       </div>
                       <div className="leading-tight">
-                        <div className="font-black text-white">#{t.ticket_number}</div>
+                        <div className="font-black text-white">{t.ticket_code ?? `#${t.ticket_number}`}</div>
                         <div className="text-xs text-zinc-500 truncate max-w-[180px]">{t.customer_name}</div>
                       </div>
                     </div>

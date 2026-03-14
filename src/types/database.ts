@@ -130,6 +130,7 @@ export interface Ticket {
   phone_number: string
   people_count: number
   ticket_number: number
+  ticket_code?: string | null
   user_session_id: string
   barber_name: string | null
   barber_id?: string | null

@@ -223,7 +223,7 @@ export default function CustomerBookingPage() {
 
       // Play a sound when successfully booking a ticket
       unlockAudio();
-      triggerSystemNotification("تم الحجز بنجاح", `رقم تذكرتك هو #${newTicket.ticket_number}`);
+      triggerSystemNotification("تم الحجز بنجاح", `رقم تذكرتك هو ${newTicket.ticket_code ?? '#' + newTicket.ticket_number}`);
       toast.success('تم إنشاء التذكرة!');
     } catch { toast.error('حدث خطأ غير متوقع'); }
     finally { setSubmitting(false); }

@@ -12,6 +12,7 @@ function sanitizeHtml(html: string): string {
 
 interface ThermalTicketProps {
     ticketNumber: number;
+    ticketCode?: string;
     ticketId: string;
     customerName: string;
     barberName?: string;
@@ -24,6 +25,7 @@ interface ThermalTicketProps {
 
 export function ThermalTicket({
     ticketNumber,
+    ticketCode,
     ticketId,
     customerName,
     barberName,
@@ -87,7 +89,7 @@ export function ThermalTicket({
                     margin: '0 auto',
                     color: '#000'
                 }}>
-                    <div>{ticketNumber}</div>
+                    <div>{ticketCode ?? ticketNumber}</div>
                     {peopleAhead !== undefined && (
                         <div style={{ fontSize: '18px', fontWeight: 'bold', color: '#000', marginTop: '6px' }}>
                             أشخاص أمامك: {peopleAhead}
@@ -185,12 +187,12 @@ export async function printThermalTicket(props: ThermalTicketProps) {
             });
 
             if (blob) {
-                const file = new File([blob], `ticket-${props.ticketNumber}.png`, { type: 'image/png' });
+                const file = new File([blob], `ticket-${props.ticketCode ?? props.ticketNumber}.png`, { type: 'image/png' });
 
                 // Check if the exact payload can be shared
                 if (navigator.canShare({ files: [file] })) {
                     await navigator.share({
-                        title: `تذكرة ${props.ticketNumber}`,
+                        title: `تذكرة ${props.ticketCode ?? props.ticketNumber}`,
                         text: `تذكرة الزبون ${props.customerName} - صالون ${props.shopName}`,
                         files: [file]
                     });
@@ -221,7 +223,7 @@ export async function printThermalTicket(props: ThermalTicketProps) {
 
     const doc = iframe.contentWindow?.document;
     if (doc) {
-        const code = `#${props.ticketNumber}`;
+        const code = props.ticketCode ?? `#${props.ticketNumber}`;
         doc.open();
         // تمرير تصميم الـ HTML للـ Iframe مع ضبط قياسات 58mm
         doc.write(`

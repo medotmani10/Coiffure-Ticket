@@ -180,7 +180,7 @@ export default function TicketStatusPage() {
         </div>
     );
 
-    const ticketCode = ticket.ticket_number;
+    const ticketCode = ticket.ticket_code ?? `#${ticket.ticket_number}`;
     const isActive = ticket.status === 'waiting' || ticket.status === 'serving';
     const isDone = ticket.status === 'completed' || ticket.status === 'canceled';
 
@@ -236,7 +236,7 @@ export default function TicketStatusPage() {
                     <div className="rounded-2xl border-2 border-zinc-700 overflow-hidden mb-6">
                         <div className="h-2 w-full bg-zinc-700" />
                         <div className="bg-zinc-900 p-8 text-center">
-                            <div className="text-7xl font-black text-zinc-500 mb-4 tracking-tighter">#{ticketCode}</div>
+                            <div className="text-7xl font-black text-zinc-500 mb-4 tracking-tighter">{ticketCode}</div>
                             <div className={`inline-flex items-center gap-2 px-6 py-2.5 rounded-full text-sm font-black mb-6 ${ticket.status === 'completed'
                                 ? 'bg-amber-500/10 text-amber-500 border border-amber-500/30'
                                 : 'bg-red-500/10 text-red-400 border border-red-500/30'
@@ -264,7 +264,7 @@ export default function TicketStatusPage() {
 
                                 <p className="text-zinc-500 text-xs font-bold uppercase tracking-widest mb-2">رقم تذكرتك</p>
                                 <div className={`text-7xl font-black mb-6 tracking-tighter ${ticket.status === 'serving' ? 'text-green-400' : 'text-amber-500'}`}>
-                                    #{ticketCode}
+                                    {ticketCode}
                                 </div>
 
                                 <div className={`inline-flex items-center gap-2 px-6 py-2.5 rounded-full text-sm font-black mb-6 ${ticket.status === 'serving'
