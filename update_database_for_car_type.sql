@@ -1,75 +1,92 @@
--- 1. Add car_type column to tickets table
-ALTER TABLE public.tickets ADD COLUMN IF NOT EXISTS car_type text;
+ALTER TABLE public.tickets
+    DROP COLUMN IF EXISTS car_type;
 
--- 2. Drop the existing function so we can recreate it with a new signature
-DROP FUNCTION IF EXISTS public.create_ticket(uuid, text, text, integer, text);
+DROP FUNCTION IF EXISTS public.create_ticket(UUID, TEXT, TEXT, INTEGER, TEXT, TEXT, UUID, TEXT);
+DROP FUNCTION IF EXISTS public.create_ticket(UUID, TEXT, TEXT, INTEGER, TEXT, TEXT);
+DROP FUNCTION IF EXISTS public.create_ticket(UUID, TEXT, TEXT, INTEGER, TEXT);
 
--- 3. Recreate the create_ticket function with the new p_car_type parameter
 CREATE OR REPLACE FUNCTION public.create_ticket(
-    p_shop_id uuid,
-    p_name text,
-    p_phone text,
-    p_people integer,
-    p_session_id text,
-    p_car_type text DEFAULT NULL
+    p_shop_id    UUID,
+    p_name       TEXT,
+    p_phone      TEXT,
+    p_people     INTEGER,
+    p_session_id TEXT,
+    p_barber_id  UUID DEFAULT NULL,
+    p_barber_name TEXT DEFAULT NULL
 )
 RETURNS SETOF public.tickets
 LANGUAGE plpgsql
 SECURITY DEFINER
-AS $$
+AS $
 DECLARE
-    v_shop_is_open boolean;
-    v_next_number integer;
-    v_active_ticket_exists boolean;
+    v_next_num   INTEGER;
+    v_last_reset TIMESTAMPTZ;
+    v_logical_start TIMESTAMPTZ;
+    v_new_ticket public.tickets;
+    v_barber_name TEXT;
 BEGIN
-    -- Check if shop is open
-    SELECT is_open INTO v_shop_is_open
-    FROM public.shops
-    WHERE id = p_shop_id;
+    PERFORM pg_advisory_xact_lock(hashtext(p_shop_id::text));
 
-    IF NOT v_shop_is_open THEN
+    IF NOT EXISTS (SELECT 1 FROM public.shops WHERE id = p_shop_id AND is_open = true) THEN
         RAISE EXCEPTION 'shop_closed';
     END IF;
 
-    -- Check if user already has an active ticket for this shop using session id
-    -- (We ignore this check if session id starts with 'manual_')
-    IF p_session_id NOT LIKE 'manual_%' THEN
-        SELECT EXISTS (
-            SELECT 1
-            FROM public.tickets
-            WHERE shop_id = p_shop_id
-              AND user_session_id = p_session_id
-              AND status IN ('waiting', 'serving')
-        ) INTO v_active_ticket_exists;
+    IF NOT (p_session_id LIKE 'manual_%') AND EXISTS (
+        SELECT 1 FROM public.tickets
+        WHERE shop_id = p_shop_id
+          AND user_session_id = p_session_id
+          AND status IN ('waiting', 'serving')
+    ) THEN
+        RAISE EXCEPTION 'duplicate_active_ticket';
+    END IF;
 
-        IF v_active_ticket_exists THEN
-            RAISE EXCEPTION 'duplicate_active_ticket';
+    IF EXTRACT(HOUR FROM now() AT TIME ZONE 'UTC') >= 5 THEN
+        v_logical_start := date_trunc('day', now() AT TIME ZONE 'UTC') + INTERVAL '5 hours';
+    ELSE
+        v_logical_start := date_trunc('day', now() AT TIME ZONE 'UTC') - INTERVAL '19 hours';
+    END IF;
+
+    SELECT COALESCE(last_reset_at, '1970-01-01'::TIMESTAMPTZ)
+    INTO v_last_reset FROM public.shops WHERE id = p_shop_id;
+
+    IF v_last_reset < v_logical_start THEN
+        v_last_reset := v_logical_start;
+    END IF;
+
+    SELECT COALESCE(MAX(ticket_number), 0) + 1
+    INTO v_next_num FROM public.tickets
+    WHERE shop_id   = p_shop_id
+      AND created_at >= v_last_reset;
+
+    v_barber_name := NULLIF(BTRIM(p_barber_name), '');
+
+    IF p_barber_id IS NOT NULL THEN
+        SELECT NULLIF(BTRIM(p.full_name), '')
+        INTO v_barber_name
+        FROM public.profiles p
+        WHERE p.id = p_barber_id
+          AND p.role = 'barber'
+          AND p.shop_id = p_shop_id;
+
+        IF NOT FOUND THEN
+            RAISE EXCEPTION 'invalid_barber';
         END IF;
     END IF;
 
-    -- Get next ticket number for this shop
-    v_next_number := public.get_next_ticket_number(p_shop_id);
-
-    -- Insert new ticket and return it
-    RETURN QUERY
     INSERT INTO public.tickets (
-        shop_id,
-        customer_name,
-        phone_number,
-        people_count,
-        ticket_number,
-        user_session_id,
-        car_type
-    )
-    VALUES (
-        p_shop_id,
-        p_name,
-        p_phone,
-        p_people,
-        v_next_number,
-        p_session_id,
-        p_car_type
-    )
-    RETURNING *;
+        shop_id, customer_name,
+        phone_number, people_count, ticket_number,
+        user_session_id, status,
+        barber_id, barber_name
+    ) VALUES (
+        p_shop_id, p_name,
+        p_phone, p_people, v_next_num,
+        p_session_id, 'waiting',
+        p_barber_id, v_barber_name
+    ) RETURNING * INTO v_new_ticket;
+
+    RETURN NEXT v_new_ticket;
 END;
-$$;
+$;
+
+GRANT EXECUTE ON FUNCTION public.create_ticket(UUID, TEXT, TEXT, INTEGER, TEXT, UUID, TEXT) TO anon, authenticated;

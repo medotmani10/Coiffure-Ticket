@@ -1,13 +1,19 @@
 ALTER TABLE public.tickets
     ADD COLUMN IF NOT EXISTS barber_name TEXT;
 
+ALTER TABLE public.tickets
+    DROP COLUMN IF EXISTS car_type;
+
+DROP FUNCTION IF EXISTS public.create_ticket(UUID, TEXT, TEXT, INTEGER, TEXT, TEXT, UUID, TEXT);
+DROP FUNCTION IF EXISTS public.create_ticket(UUID, TEXT, TEXT, INTEGER, TEXT, TEXT);
+DROP FUNCTION IF EXISTS public.create_ticket(UUID, TEXT, TEXT, INTEGER, TEXT);
+
 CREATE OR REPLACE FUNCTION public.create_ticket(
     p_shop_id    UUID,
     p_name       TEXT,
     p_phone      TEXT,
     p_people     INTEGER,
     p_session_id TEXT,
-    p_car_type   TEXT DEFAULT NULL,
     p_barber_id  UUID DEFAULT NULL,
     p_barber_name TEXT DEFAULT NULL
 )
@@ -73,12 +79,12 @@ BEGIN
     INSERT INTO public.tickets (
         shop_id, customer_name,
         phone_number, people_count, ticket_number,
-        user_session_id, status, car_type,
+        user_session_id, status,
         barber_id, barber_name
     ) VALUES (
         p_shop_id, p_name,
         p_phone, p_people, v_next_num,
-        p_session_id, 'waiting', p_car_type,
+        p_session_id, 'waiting',
         p_barber_id, v_barber_name
     ) RETURNING * INTO v_new_ticket;
 
@@ -86,5 +92,5 @@ BEGIN
 END;
 $$;
 
-GRANT EXECUTE ON FUNCTION public.create_ticket(UUID, TEXT, TEXT, INTEGER, TEXT, TEXT, UUID, TEXT) TO anon, authenticated;
+GRANT EXECUTE ON FUNCTION public.create_ticket(UUID, TEXT, TEXT, INTEGER, TEXT, UUID, TEXT) TO anon, authenticated;
 
