@@ -287,8 +287,8 @@ export default function TicketStatusPage() {
                         </div>
 
                         {/* Live indicator */}
-                        <div className="flex items-center justify-center gap-2 text-xs font-bold text-cyan-400 bg-cyan-500/5 border border-cyan-500/20 rounded-xl py-3 mb-4">
-                            <div className="w-2 h-2 bg-cyan-500 rounded-full animate-pulse" />
+                        <div className="flex items-center justify-center gap-2 text-xs font-bold text-amber-400 bg-amber-500/5 border border-amber-500/20 rounded-xl py-3 mb-4">
+                            <div className="w-2 h-2 bg-amber-500 rounded-full animate-pulse" />
                             النظام متصل ويتحدث تلقائياً
                         </div>
 

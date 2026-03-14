@@ -76,7 +76,7 @@ export default function SuperAdminLogin() {
                 </div>
 
                 <div className="bg-zinc-900/50 backdrop-blur-xl border border-zinc-800/50 p-8 sm:p-10 rounded-[2.5rem] shadow-2xl relative animate-in fade-in slide-in-from-bottom-4 duration-700 delay-150">
-                    <div className="absolute top-0 inset-x-8 h-px bg-gradient-to-r from-transparent via-blue-500/30 to-transparent" />
+                    <div className="absolute top-0 inset-x-8 h-px bg-gradient-to-r from-transparent via-amber-500/30 to-transparent" />
 
                     <form onSubmit={handleLogin} className="space-y-6">
                         <div className="space-y-3">

@@ -246,14 +246,14 @@ export default function ArchivePage() {
             <div className="absolute inset-0 bg-gradient-to-br from-amber-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
             <CardContent className="p-6 text-center relative z-10">
               <p className="text-zinc-500 font-medium text-sm mb-2">الإجمالي</p>
-              <p className="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-blue-600 drop-shadow-lg">{stats.total}</p>
+              <p className="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-amber-600 drop-shadow-lg">{stats.total}</p>
             </CardContent>
           </Card>
         </div>
 
         {/* Search */}
         <div className="relative mb-8 group">
-          <div className="absolute inset-0 bg-gradient-to-r from-amber-500/0 via-blue-500/5 to-blue-500/0 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity" />
+          <div className="absolute inset-0 bg-gradient-to-r from-amber-500/0 via-amber-500/5 to-amber-500/0 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity" />
           <Search className="absolute right-5 top-1/2 -translate-y-1/2 w-6 h-6 text-zinc-500 group-hover:text-amber-500 transition-colors z-10" />
           <Input
             value={searchQuery}

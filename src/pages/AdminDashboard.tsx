@@ -23,21 +23,21 @@ function StatCard({ label, value, color, sub }: { label: string; value: number; 
       'relative overflow-hidden rounded-2xl border p-5 flex flex-col gap-1 group cursor-default',
       'bg-zinc-950 transition-all duration-300 hover:-translate-y-1',
       color === 'blue' && 'border-amber-500/20 hover:border-amber-500/50 hover:shadow-[0_8px_32px_-4px_rgba(245,158,11,0.25)]',
-      color === 'cyan' && 'border-cyan-500/20  hover:border-cyan-500/50  hover:shadow-[0_8px_32px_-4px_rgba(6,182,212,0.2)]',
+      color === 'cyan' && 'border-amber-500/20  hover:border-amber-500/50  hover:shadow-[0_8px_32px_-4px_rgba(245,158,11,0.2)]',
       color === 'zinc' && 'border-zinc-700/40   hover:border-zinc-500/40   hover:shadow-[0_8px_32px_-4px_rgba(120,120,120,0.15)]',
     )}>
       {/* glow blob */}
       <div className={cn(
         'absolute -top-6 -right-6 w-24 h-24 rounded-full blur-2xl opacity-0 group-hover:opacity-30 transition-opacity duration-500',
         color === 'blue' && 'bg-amber-500',
-        color === 'cyan' && 'bg-cyan-500',
+        color === 'cyan' && 'bg-amber-500',
         color === 'zinc' && 'bg-zinc-400',
       )} />
       <p className="text-xs text-zinc-500 font-semibold uppercase tracking-widest">{label}</p>
       <p className={cn(
         'text-5xl font-black tracking-tight',
         color === 'blue' && 'text-amber-500',
-        color === 'cyan' && 'text-cyan-500',
+        color === 'cyan' && 'text-amber-500',
         color === 'zinc' && 'text-zinc-200',
       )}>{value}</p>
       {sub && <p className="text-xs text-zinc-600 mt-1">{sub}</p>}
@@ -440,11 +440,11 @@ export default function AdminDashboard() {
                 className={cn(
                   'flex items-center gap-2 px-3 py-2 rounded-xl border text-xs font-black transition-all duration-300',
                   shop.is_open
-                    ? 'bg-cyan-500/10 border-cyan-500/30 text-cyan-400'
+                    ? 'bg-amber-500/10 border-amber-500/30 text-amber-400'
                     : 'bg-zinc-900 border-zinc-700 text-zinc-500'
                 )}
               >
-                <span className={cn('w-2 h-2 rounded-full transition-colors shrink-0', shop.is_open ? 'bg-cyan-400 animate-pulse' : 'bg-zinc-600')} />
+                <span className={cn('w-2 h-2 rounded-full transition-colors shrink-0', shop.is_open ? 'bg-amber-400 animate-pulse' : 'bg-zinc-600')} />
                 {shop.is_open ? 'مفتوح' : 'مغلق'}
               </button>
             </div>
@@ -459,14 +459,14 @@ export default function AdminDashboard() {
               className={cn(
                 'hidden md:flex items-center gap-2 px-3 py-2 rounded-xl border text-xs font-black transition-all duration-300',
                 shop.is_open
-                  ? 'bg-cyan-500/10 border-cyan-500/30 text-cyan-400 hover:bg-cyan-500/20'
+                  ? 'bg-amber-500/10 border-amber-500/30 text-amber-400 hover:bg-amber-500/20'
                   : 'bg-zinc-900 border-zinc-700 text-zinc-500 hover:border-zinc-500'
               )}
             >
-              <span className={cn('w-2 h-2 rounded-full transition-colors shrink-0', shop.is_open ? 'bg-cyan-400 animate-pulse' : 'bg-zinc-600')} />
+              <span className={cn('w-2 h-2 rounded-full transition-colors shrink-0', shop.is_open ? 'bg-amber-400 animate-pulse' : 'bg-zinc-600')} />
               <span>{shop.is_open ? 'مفتوح' : 'مغلق'}</span>
               <Switch checked={shop.is_open} onCheckedChange={() => { }} onClick={(e) => e.stopPropagation()}
-                className="data-[state=checked]:bg-cyan-500 scale-75 pointer-events-none" />
+                className="data-[state=checked]:bg-amber-500 scale-75 pointer-events-none" />
             </button>
 
             {/* Common Action Buttons */}
@@ -561,12 +561,12 @@ export default function AdminDashboard() {
         </div>
 
         {/* ─── Live indicator ─── */}
-        <div className="flex items-center gap-2 text-xs font-semibold text-cyan-400/80">
+        <div className="flex items-center gap-2 text-xs font-semibold text-amber-400/80">
           <TrendingUp className="w-3.5 h-3.5" />
           <span>لوحة حية — تتحدث فور كل تغيير</span>
           <span className="flex h-1.5 w-1.5 relative mr-1">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75" />
-            <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-cyan-500" />
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75" />
+            <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-amber-500" />
           </span>
         </div>
 
@@ -601,7 +601,7 @@ export default function AdminDashboard() {
                 className={cn(
                   'w-full rounded-2xl h-14 md:h-[4.5rem] flex items-center justify-center gap-3 font-black text-xl transition-all duration-150',
                   shop.is_open
-                    ? 'text-white bg-cyan-600 hover:bg-cyan-500 active:scale-[0.98] shadow-[0_4px_24px_-4px_rgba(6,182,212,0.5)] hover:shadow-[0_8px_32px_-4px_rgba(6,182,212,0.6)]'
+                    ? 'text-white bg-amber-600 hover:bg-amber-500 active:scale-[0.98] shadow-[0_4px_24px_-4px_rgba(245,158,11,0.5)] hover:shadow-[0_8px_32px_-4px_rgba(245,158,11,0.6)]'
                     : 'text-zinc-500 bg-zinc-800 cursor-not-allowed opacity-80'
                 )}>
                 <Plus className="w-6 h-6" />
@@ -706,10 +706,10 @@ export default function AdminDashboard() {
           <div className="space-y-4">
             <div className="flex items-center justify-between border-b border-zinc-800 pb-2">
               <h3 className="font-black text-white text-lg flex items-center gap-2">
-                <Scissors className="w-5 h-5 text-cyan-400" />
+                <Scissors className="w-5 h-5 text-amber-400" />
                 زبائن قيد الحلاقة
               </h3>
-              <span className="bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-xs font-black px-2.5 py-1 rounded-full">
+              <span className="bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-black px-2.5 py-1 rounded-full">
                 {servingCount}
               </span>
             </div>
@@ -722,12 +722,12 @@ export default function AdminDashboard() {
             ) : (
               <div className="space-y-3">
                 {servingTickets.map((t: Ticket) => (
-                  <div key={t.id} className="rounded-2xl border border-cyan-500/20 bg-cyan-500/5 p-5 text-center relative overflow-hidden flex flex-col items-center group cursor-pointer" onClick={() => setSelectedTicketDetails(t)}>
-                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-cyan-400/5 to-transparent translate-x-[-100%] animate-[shimmer_2.5s_infinite]" />
+                  <div key={t.id} className="rounded-2xl border border-amber-500/20 bg-amber-500/5 p-5 text-center relative overflow-hidden flex flex-col items-center group cursor-pointer" onClick={() => setSelectedTicketDetails(t)}>
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-amber-400/5 to-transparent translate-x-[-100%] animate-[shimmer_2.5s_infinite]" />
                     <div className="relative z-10 w-full">
                       <div className="flex justify-between items-start w-full mb-2">
-                        <div className="inline-flex items-center gap-2 bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-xs font-black px-3 py-1 rounded-full">
-                          <span className="w-1.5 h-1.5 bg-cyan-400 rounded-full animate-pulse" /> يحلق الآن
+                        <div className="inline-flex items-center gap-2 bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-black px-3 py-1 rounded-full">
+                          <span className="w-1.5 h-1.5 bg-amber-400 rounded-full animate-pulse" /> يحلق الآن
                         </div>
                         <p className="text-4xl font-black text-white">#{t.ticket_number}</p>
                       </div>
@@ -738,7 +738,7 @@ export default function AdminDashboard() {
                       </div>
                       <div className="mt-4 flex gap-2 w-full">
                         <Button onClick={(e) => { e.stopPropagation(); finishTicket(t.id); }} variant="outline"
-                          className="w-full rounded-xl h-11 bg-cyan-500/10 text-cyan-400 border-cyan-500/20 hover:bg-cyan-500/20 font-black">
+                          className="w-full rounded-xl h-11 bg-amber-500/10 text-amber-400 border-amber-500/20 hover:bg-amber-500/20 font-black">
                           <CheckCircle className="w-4 h-4 mr-2" /> إنهاء الحلاقة
                         </Button>
                       </div>

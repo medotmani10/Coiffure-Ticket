@@ -160,7 +160,7 @@ export default function OnboardingPage() {
         </div>
 
         <div className="bg-zinc-900/50 backdrop-blur-xl border border-zinc-800/50 rounded-[2.5rem] shadow-2xl overflow-hidden relative animate-in fade-in slide-in-from-bottom-4 duration-700">
-          <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-transparent via-blue-500/30 to-transparent" />
+          <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-transparent via-amber-500/30 to-transparent" />
 
           <div className="p-8 sm:p-10 space-y-6">
             <div className="text-center mb-10">
