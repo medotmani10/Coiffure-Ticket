@@ -121,12 +121,21 @@ export default function AdminSettingsPage() {
         }
         setCreatingBarber(true);
         try {
+            const { data: { session } } = await supabase.auth.getSession();
+            if (!session?.access_token) {
+                toast.error('انتهت الجلسة، يرجى تسجيل الدخول من جديد');
+                return;
+            }
+
             const { data, error } = await supabase.functions.invoke('create-barber', {
                 body: {
                     shopId: shop.id,
                     email: newBarberEmail.trim(),
                     password: newBarberPassword.trim(),
                     fullName: newBarberName.trim() || null,
+                },
+                headers: {
+                    Authorization: `Bearer ${session.access_token}`,
                 },
             });
             if (error) {
