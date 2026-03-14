@@ -72,7 +72,7 @@ export default function LandingPage() {
               className="rounded-full bg-amber-600 hover:bg-amber-500 text-black font-black border-none flex items-center gap-2 text-sm px-6 h-11"
             >
               <Download className="w-4 h-4" />
-              سجل الآن صالونك
+              حمل التطبيق الآن
             </Button>
           </div>
 
@@ -95,7 +95,7 @@ export default function LandingPage() {
               onClick={() => { handleAppDownload(); setIsMobileMenuOpen(false); }}
               className="rounded-full w-full bg-amber-600 text-black font-black mt-2 h-12"
             >
-              سجل صالونك
+              حمل التطبيق
             </Button>
           </div>
         )}
@@ -122,7 +122,7 @@ export default function LandingPage() {
                 <Button size="lg"
                   onClick={handleAppDownload}
                   className="rounded-full h-14 px-8 bg-amber-600 hover:bg-amber-500 text-black font-black text-lg transition-all shadow-[0_4px_20px_rgba(245,158,11,0.3)] hover:shadow-[0_8px_30px_rgba(245,158,11,0.5)]">
-                  ابدأ الاستخدام مجاناً
+                  ابدأ الاستخدام الآن
                   <ChevronLeft className="w-5 h-5 mr-1" />
                 </Button>
                 <Button variant="outline" size="lg"
@@ -312,7 +312,7 @@ export default function LandingPage() {
                 مع تصميم واجهة يليق بمستوى خدماتك، دع الزبون يشعر بالفخامة بدءاً من الحجز وحتى خروجه من الصالون مبتسماً.
               </p>
               <Button className="rounded-full bg-amber-600 text-black hover:bg-amber-500 h-12 px-8 font-black border-none">
-                ابدأ الآن مجاناً
+                ابدأ رحلتك الآن
               </Button>
             </div>
 
@@ -350,7 +350,7 @@ export default function LandingPage() {
 
           <div className="space-y-4 text-right">
             {[
-              { q: "هل التطبيق مجاني لأصحاب الصالونات؟", a: "نعم! النسخة الأساسية موجهة لإدارة الطابور بالكامل وبشكل مجاني." },
+              { q: "هل التطبيق متاح لأصحاب جميع الصالونات؟", a: "نعم! النسخة الأساسية مهيأة وموجهة لإدارة الصالونات بجميع أحجامها بفعالية عالية." },
               { q: "كيف يعرف الزبون دوره؟", a: "عبر رابط مباشر يُرسل له، ويمكنه تحديث صفحة التتبع بسهولة من هاتفه." },
               { q: "هل أحتاج لمعدات خاصة؟", a: "فقط هاتفك أو جهاز لوحي لإدارة المواعيد بشكل لحظي." },
               { q: "هل بيانات الصالون محمية؟", a: "نعم، نستخدم أعلى معايير التشفير وقواعد البيانات الآمنة لخصوصية زبائنك." },
