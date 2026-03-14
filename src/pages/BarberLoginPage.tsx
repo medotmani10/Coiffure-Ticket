@@ -5,13 +5,14 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import type { Profile } from '@/types/database';
-import { Loader2, Lock, Mail, Scissors } from 'lucide-react';
+import { Loader2, Lock, Scissors, User } from 'lucide-react';
 import { toast } from 'sonner';
 
 export default function BarberLoginPage() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
-  const [email, setEmail] = useState('');
+  const [shopSlug, setShopSlug] = useState('');
+  const [barberName, setBarberName] = useState('');
   const [password, setPassword] = useState('');
 
   useEffect(() => {
@@ -32,14 +33,19 @@ export default function BarberLoginPage() {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email || !password) {
-      toast.error('يرجى إدخال البريد الإلكتروني وكلمة المرور');
+    if (!shopSlug.trim() || !barberName.trim() || !password) {
+      toast.error('يرجى إدخال رمز المحل واسم الحلاق وكلمة المرور');
       return;
     }
 
+    const hexName = Array.from(new TextEncoder().encode(barberName.trim()))
+      .map((b) => b.toString(16).padStart(2, '0'))
+      .join('');
+    const pseudoEmail = `${hexName}@${shopSlug.trim()}.com`;
+
     setLoading(true);
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+      const { data, error } = await supabase.auth.signInWithPassword({ email: pseudoEmail, password });
       if (error || !data.session) {
         toast.error('البريد الإلكتروني أو كلمة المرور غير صحيحة');
         return;
@@ -95,16 +101,30 @@ export default function BarberLoginPage() {
           <form onSubmit={handleLogin} className="space-y-5">
             <div className="space-y-2">
               <Label className="text-zinc-300 font-bold mr-1 flex items-center gap-2">
-                <Mail className="w-4 h-4 text-amber-500" />
-                البريد الإلكتروني
+                <Scissors className="w-4 h-4 text-amber-500" />
+                رمز المحل (shop slug)
               </Label>
               <Input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="barber@coiffure.com"
+                value={shopSlug}
+                onChange={(e) => setShopSlug(e.target.value)}
+                placeholder="مثال: elegant-salon"
                 className="rounded-xl h-14 bg-black/50 border-zinc-800 text-white focus-visible:ring-amber-500 placeholder:text-zinc-600"
                 dir="ltr"
+                disabled={loading}
+                required
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label className="text-zinc-300 font-bold mr-1 flex items-center gap-2">
+                <User className="w-4 h-4 text-amber-500" />
+                اسم الحلاق
+              </Label>
+              <Input
+                value={barberName}
+                onChange={(e) => setBarberName(e.target.value)}
+                placeholder="مثال: أيوب"
+                className="rounded-xl h-14 bg-black/50 border-zinc-800 text-white focus-visible:ring-amber-500 placeholder:text-zinc-600"
                 disabled={loading}
                 required
               />

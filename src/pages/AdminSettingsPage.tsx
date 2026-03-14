@@ -2,14 +2,14 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import type { Profile, Shop } from '@/types/database';
-import type { User as SupabaseUser } from '@supabase/supabase-js';
+import { createClient, type User as SupabaseUser } from '@supabase/supabase-js';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Switch } from '@/components/ui/switch';
-import { Scissors, MapPin, Upload, ArrowRight, Save, Loader2, Smartphone, Users, UserPlus, Mail, Lock, User } from 'lucide-react';
+import { Scissors, MapPin, Upload, ArrowRight, Save, Loader2, Smartphone, Users, UserPlus, Lock, User } from 'lucide-react';
 import { toast } from 'sonner';
 import { compressImage } from '@/lib/imageCompression';
 
@@ -22,7 +22,6 @@ export default function AdminSettingsPage() {
     const [barbersLoading, setBarbersLoading] = useState(false);
     const [creatingBarber, setCreatingBarber] = useState(false);
     const [newBarberName, setNewBarberName] = useState('');
-    const [newBarberEmail, setNewBarberEmail] = useState('');
     const [newBarberPassword, setNewBarberPassword] = useState('');
 
     const [shopName, setShopName] = useState('');
@@ -115,40 +114,66 @@ export default function AdminSettingsPage() {
     const createBarber = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!shop) return;
-        if (!newBarberEmail.trim() || !newBarberPassword.trim()) {
-            toast.error('يرجى إدخال البريد الإلكتروني وكلمة المرور');
+
+        const barberName = newBarberName.trim();
+        const barberPassword = newBarberPassword.trim();
+
+        if (!barberName || !barberPassword) {
+            toast.error('يرجى إدخال اسم الحلاق وكلمة المرور');
             return;
         }
+
         setCreatingBarber(true);
         try {
-            const { data: { session } } = await supabase.auth.getSession();
-            if (!session?.access_token) {
-                toast.error('انتهت الجلسة، يرجى تسجيل الدخول من جديد');
+            const hexName = Array.from(new TextEncoder().encode(barberName))
+                .map((b) => b.toString(16).padStart(2, '0'))
+                .join('');
+            const pseudoEmail = `${hexName}@${shop.slug}.com`;
+
+            const supabaseUrl = import.meta.env.VITE_SUPABASE_URL as string | undefined;
+            const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY as string | undefined;
+            if (!supabaseUrl || !supabaseAnonKey) {
+                toast.error('إعدادات Supabase غير مكتملة');
                 return;
             }
 
-            const { data, error } = await supabase.functions.invoke('create-barber', {
-                body: {
-                    shopId: shop.id,
-                    email: newBarberEmail.trim(),
-                    password: newBarberPassword.trim(),
-                    fullName: newBarberName.trim() || null,
-                },
-                headers: {
-                    Authorization: `Bearer ${session.access_token}`,
-                },
+            const tempClient = createClient(
+                supabaseUrl,
+                supabaseAnonKey,
+                { auth: { persistSession: false, autoRefreshToken: false } }
+            );
+
+            const { data: signUpData, error: signUpError } = await tempClient.auth.signUp({
+                email: pseudoEmail,
+                password: barberPassword,
             });
-            if (error) {
-                toast.error('فشل إنشاء حساب الحلاق');
+
+            if (signUpError || !signUpData.user) {
+                toast.error(signUpError?.message || 'فشل إنشاء حساب الحلاق');
                 return;
             }
-            if (!data?.success) {
-                toast.error('فشل إنشاء حساب الحلاق');
+
+            const barberUserId = signUpData.user.id;
+
+            const { error: profileError } = await supabase
+                .from('profiles')
+                .insert({
+                    id: barberUserId,
+                    shop_id: shop.id,
+                    role: 'barber',
+                    full_name: barberName,
+                    is_active: true,
+                });
+
+            if (profileError) {
+                toast.error(profileError.message || 'فشل ربط الحلاق بالمحل');
                 return;
             }
+
+            await tempClient.auth.signOut();
+
             toast.success('تم إنشاء حساب الحلاق بنجاح');
             setNewBarberName('');
-            setNewBarberEmail('');
             setNewBarberPassword('');
             loadBarbers(shop.id);
         } catch {
@@ -398,7 +423,7 @@ export default function AdminSettingsPage() {
                                         إضافة حلاق جديد
                                     </div>
 
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div className="grid grid-cols-1 gap-4">
                                         <div className="space-y-2">
                                             <Label className="text-zinc-300 font-bold flex items-center gap-2">
                                                 <User className="w-4 h-4 text-amber-500" />
@@ -409,20 +434,6 @@ export default function AdminSettingsPage() {
                                                 onChange={(e) => setNewBarberName(e.target.value)}
                                                 placeholder="مثال: أيوب"
                                                 className="rounded-xl h-12 bg-black border-zinc-700 text-white focus-visible:ring-amber-500 placeholder:text-zinc-600"
-                                            />
-                                        </div>
-                                        <div className="space-y-2">
-                                            <Label className="text-zinc-300 font-bold flex items-center gap-2">
-                                                <Mail className="w-4 h-4 text-amber-500" />
-                                                البريد الإلكتروني
-                                            </Label>
-                                            <Input
-                                                value={newBarberEmail}
-                                                onChange={(e) => setNewBarberEmail(e.target.value)}
-                                                placeholder="barber@coiffure.com"
-                                                className="rounded-xl h-12 bg-black border-zinc-700 text-white focus-visible:ring-amber-500 placeholder:text-zinc-600"
-                                                dir="ltr"
-                                                type="email"
                                                 required
                                             />
                                         </div>

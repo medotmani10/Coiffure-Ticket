@@ -20,7 +20,7 @@ function App() {
   const hostname = window.location.hostname;
   const isSuperAdmin = hostname.includes('superadmin');
   const isAdmin = hostname.includes('admin') && !isSuperAdmin;
-  const isBarber = hostname.includes('barber') && !isAdmin && !isSuperAdmin;
+  const isBarber = hostname.includes('coiffure-coiffureticket') && !isAdmin && !isSuperAdmin;
   const isCustomer = hostname.includes('costumer') || hostname.includes('customer');
 
   // ---------------------------------------------------------------------------
