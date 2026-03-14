@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
+import type { User as SupabaseUser } from '@supabase/supabase-js';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -17,7 +18,7 @@ export default function OnboardingPage() {
   const [shopPhone, setShopPhone] = useState('');
   const [logoFile, setLogoFile] = useState<File | null>(null);
   const [logoPreview, setLogoPreview] = useState<string | null>(null);
-  const [currentUser, setCurrentUser] = useState<any>(null);
+  const [currentUser, setCurrentUser] = useState<SupabaseUser | null>(null);
 
   useEffect(() => {
     checkAuth();
@@ -97,6 +98,11 @@ export default function OnboardingPage() {
       toast.error('يرجى إدخال اسم المحطة');
       return;
     }
+    if (!currentUser) {
+      toast.error('يرجى تسجيل الدخول أولاً');
+      navigate('/');
+      return;
+    }
 
     setLoading(true);
 
@@ -133,7 +139,7 @@ export default function OnboardingPage() {
 
       toast.success('تم إنشاء المحطة بنجاح!');
       navigate('/admin');
-    } catch (error) {
+    } catch {
       toast.error('حدث خطأ غير متوقع');
     } finally {
       setLoading(false);

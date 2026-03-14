@@ -21,11 +21,22 @@ export default function SuperAdminDashboard() {
     const [loading, setLoading] = useState(true);
     const [userEmail, setUserEmail] = useState<string | null>(null);
 
-    useEffect(() => {
-        checkAuth();
-    }, []);
+    async function loadShops() {
+        setLoading(true);
+        const { data, error } = await supabase
+            .from('shops')
+            .select('id, name, owner_id, status, created_at')
+            .order('created_at', { ascending: false });
 
-    const checkAuth = async () => {
+        if (error) {
+            toast.error('حدث خطأ في تحميل البيانات');
+        } else {
+            setShops(data as Shop[]);
+        }
+        setLoading(false);
+    }
+
+    async function checkAuth() {
         const { data: { session } } = await supabase.auth.getSession();
         if (!session) {
             navigate('/');
@@ -41,22 +52,11 @@ export default function SuperAdminDashboard() {
 
         setUserEmail(session.user.email);
         loadShops();
-    };
+    }
 
-    const loadShops = async () => {
-        setLoading(true);
-        const { data, error } = await supabase
-            .from('shops')
-            .select('id, name, owner_id, status, created_at')
-            .order('created_at', { ascending: false });
-
-        if (error) {
-            toast.error('حدث خطأ في تحميل البيانات');
-        } else {
-            setShops(data as Shop[]);
-        }
-        setLoading(false);
-    };
+    useEffect(() => {
+        checkAuth();
+    }, []);
 
     const updateShopStatus = async (shopId: string, newStatus: 'approved' | 'rejected') => {
         const { error } = await supabase

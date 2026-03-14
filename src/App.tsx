@@ -13,11 +13,14 @@ import SuperAdminDashboard from './pages/SuperAdminDashboard';
 import SuperAdminLogin from './pages/SuperAdminLogin';
 import CustomerInstallPrompt from '@/components/CustomerInstallPrompt';
 import CustomerRootRedirect from '@/components/CustomerRootRedirect';
+import BarberLoginPage from '@/pages/BarberLoginPage';
+import BarberDashboard from '@/pages/BarberDashboard';
 
 function App() {
   const hostname = window.location.hostname;
   const isSuperAdmin = hostname.includes('superadmin');
   const isAdmin = hostname.includes('admin') && !isSuperAdmin;
+  const isBarber = hostname.includes('barber') && !isAdmin && !isSuperAdmin;
   const isCustomer = hostname.includes('costumer') || hostname.includes('customer');
 
   // ---------------------------------------------------------------------------
@@ -55,6 +58,24 @@ function App() {
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
           <AdminInstallPrompt />
+          <Toaster position="top-center" richColors />
+        </div>
+      </BrowserRouter>
+    );
+  }
+
+  // ---------------------------------------------------------------------------
+  // BARBER ROUTES
+  // ---------------------------------------------------------------------------
+  if (isBarber) {
+    return (
+      <BrowserRouter>
+        <div dir="rtl" className="min-h-[100dvh] bg-background text-foreground">
+          <Routes>
+            <Route path="/" element={<BarberLoginPage />} />
+            <Route path="/barber/:shopSlug" element={<BarberDashboard />} />
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
           <Toaster position="top-center" richColors />
         </div>
       </BrowserRouter>

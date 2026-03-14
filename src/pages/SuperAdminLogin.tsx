@@ -50,7 +50,7 @@ export default function SuperAdminLogin() {
                 toast.success('تم تسجيل الدخول بنجاح');
                 navigate('/admin');
             }
-        } catch (error) {
+        } catch {
             toast.error('حدث خطأ غير متوقع');
         } finally {
             setLoading(false);

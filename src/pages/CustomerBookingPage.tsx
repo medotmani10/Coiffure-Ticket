@@ -63,7 +63,7 @@ export default function CustomerBookingPage() {
       .on('postgres_changes', { event: '*', schema: 'public', table: 'tickets', filter: `shop_id=eq.${shop.id}` }, async () => {
         // fetch total waiting count
         const { data: waitingTickets } = await supabase.from('tickets').select('people_count').eq('shop_id', shop.id).eq('status', 'waiting');
-        const count = (waitingTickets || []).reduce((acc: number, t: any) => acc + (t.people_count || 1), 0);
+        const count = (waitingTickets || []).reduce((acc: number, t: { people_count: number | null }) => acc + (t.people_count || 1), 0);
         setQueueCount(count);
         if (activeTicket) {
           calculatePeopleAhead(activeTicket);
@@ -88,7 +88,7 @@ export default function CustomerBookingPage() {
 
       // Queue counts
       const { data: waitingTickets } = await supabase.from('tickets').select('people_count').eq('shop_id', shopData.id).eq('status', 'waiting');
-      const count = (waitingTickets || []).reduce((acc: number, t: any) => acc + (t.people_count || 1), 0);
+      const count = (waitingTickets || []).reduce((acc: number, t: { people_count: number | null }) => acc + (t.people_count || 1), 0);
       setQueueCount(count);
 
       // Check for existing active ticket for this session

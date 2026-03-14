@@ -30,8 +30,10 @@ export default function TicketStatusPage() {
         if (ticketId) loadTicket();
 
         // Detect iOS web browser (not standalone PWA)
-        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream;
-        const isStandalone = window.matchMedia('(display-mode: standalone)').matches || (navigator as any).standalone === true;
+        const w = window as Window & typeof globalThis & { MSStream?: unknown };
+        const nav = navigator as Navigator & { standalone?: boolean };
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !w.MSStream;
+        const isStandalone = window.matchMedia('(display-mode: standalone)').matches || nav.standalone === true;
         if (isIOS && !isStandalone) {
             setShowIOSPrompt(true);
         }

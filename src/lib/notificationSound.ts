@@ -22,7 +22,8 @@ export function unlockAudio() {
 
 function getAudioContext(): AudioContext {
     if (!audioCtx) {
-        audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
+        const w = window as Window & typeof globalThis & { webkitAudioContext?: typeof AudioContext };
+        audioCtx = new (window.AudioContext || w.webkitAudioContext)();
     }
     return audioCtx;
 }

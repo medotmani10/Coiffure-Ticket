@@ -9,6 +9,11 @@ export type Json =
 export interface Database {
   public: {
     Tables: {
+      profiles: {
+        Row: Profile
+        Insert: Partial<Profile>
+        Update: Partial<Profile>
+      }
       shops: {
         Row: Shop
         Insert: Partial<Shop>
@@ -66,13 +71,23 @@ export interface Database {
         Returns: number
       }
       process_next_customer: {
-        Args: { p_shop_id: string, p_barber_name?: string }
+        Args: { p_shop_id: string }
+        Returns: {
+          ticket_id: string
+          ticket_number: number
+          customer_name: string
+          people_count: number
+        }[]
+      }
+      barber_next_ticket: {
+        Args: { p_shop_id: string }
         Returns: {
           ticket_id: string
           ticket_number: number
           customer_name: string
           people_count: number
           barber_name: string | null
+          barber_id: string | null
         }[]
       }
       get_vapid_public_key: {
@@ -97,6 +112,16 @@ export interface Shop {
   created_at: string
 }
 
+export interface Profile {
+  id: string
+  shop_id: string
+  full_name: string | null
+  role: 'admin' | 'barber'
+  is_active: boolean
+  created_at: string
+  updated_at: string
+}
+
 export interface Ticket {
   id: string
   shop_id: string
@@ -106,8 +131,8 @@ export interface Ticket {
   ticket_number: number
   user_session_id: string
   barber_name: string | null
+  barber_id?: string | null
   status: 'waiting' | 'serving' | 'completed' | 'canceled'
   created_at: string
   updated_at: string
 }
-

@@ -25,26 +25,16 @@ export default function ArchivePage() {
     new Date().toISOString().split('T')[0]
   );
 
-  useEffect(() => {
-    checkAuth();
-  }, []);
-
-  useEffect(() => {
-    if (shop) {
-      loadTickets();
-    }
-  }, [shop?.id, selectedDate, timeFilter]);
-
-  const checkAuth = async () => {
+  async function checkAuth() {
     const { data: { session } } = await supabase.auth.getSession();
     if (!session) {
       navigate('/');
       return;
     }
     loadShopData(session.user.id);
-  };
+  }
 
-  const loadShopData = async (userId: string, retries = 3) => {
+  async function loadShopData(userId: string, retries = 3) {
     try {
       const { data: shopData, error: shopError } = await supabase
         .from('shops')
@@ -63,13 +53,13 @@ export default function ArchivePage() {
 
       setShop(shopData as Shop);
       setLoading(false);
-    } catch (error) {
+    } catch {
       toast.error('حدث خطأ في تحميل البيانات');
       setLoading(false);
     }
-  };
+  }
 
-  const loadTickets = async () => {
+  async function loadTickets() {
     if (!shop) return;
 
     let query = supabase
@@ -79,7 +69,6 @@ export default function ArchivePage() {
       .in('status', ['completed', 'canceled'])
       .order('created_at', { ascending: false });
 
-    // Apply Time Filters
     const now = new Date();
     let startOfDay = new Date();
     let endOfDay = new Date();
@@ -98,11 +87,20 @@ export default function ArchivePage() {
       startOfDay.setMonth(now.getMonth() - 1);
       query = query.gte('created_at', startOfDay.toISOString());
     }
-    // if 'all', we don't apply date bounds
 
     const { data } = await query;
     setTickets((data as Ticket[]) || []);
-  };
+  }
+
+  useEffect(() => {
+    checkAuth();
+  }, []);
+
+  useEffect(() => {
+    if (shop) {
+      loadTickets();
+    }
+  }, [shop?.id, selectedDate, timeFilter]);
 
 
   const getStatusBadge = (status: string) => {
@@ -195,7 +193,7 @@ export default function ArchivePage() {
                 <div className="w-12 h-12 rounded-2xl bg-zinc-900 border border-zinc-800 flex items-center justify-center shrink-0">
                   <Filter className="w-5 h-5 text-amber-500" />
                 </div>
-                <Select value={timeFilter} onValueChange={(val: any) => setTimeFilter(val)}>
+                <Select value={timeFilter} onValueChange={(val) => setTimeFilter(val as TimeFilter)}>
                   <SelectTrigger className="w-full rounded-2xl h-14 bg-black/50 border-zinc-800 text-white focus:ring-amber-500 hover:border-zinc-700 font-bold">
                     <SelectValue placeholder="اختر الفترة" />
                   </SelectTrigger>

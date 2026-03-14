@@ -205,10 +205,11 @@ export async function printThermalTicket(props: ThermalTicketProps) {
                     return;
                 }
             }
-        } catch (err: any) {
+        } catch (err) {
             // AbortError is thrown when users close the share sheet deliberately. 
             // We shouldn't fallback to iframe in that case because they explicitly canceled it.
-            if (err.name === 'AbortError') {
+            const name = err instanceof Error ? err.name : '';
+            if (name === 'AbortError') {
                 root.unmount();
                 if (document.body.contains(container)) document.body.removeChild(container);
                 return;

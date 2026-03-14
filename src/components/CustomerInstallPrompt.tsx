@@ -19,7 +19,8 @@ export default function CustomerInstallPrompt() {
 
     useEffect(() => {
         // Check if already installed
-        const isStandalone = window.matchMedia('(display-mode: standalone)').matches || (window.navigator as any).standalone === true;
+        const nav = window.navigator as Navigator & { standalone?: boolean };
+        const isStandalone = window.matchMedia('(display-mode: standalone)').matches || nav.standalone === true;
         if (isStandalone) {
             setIsInstalled(true);
             return;

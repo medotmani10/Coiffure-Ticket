@@ -49,8 +49,9 @@ serve(async (req: Request) => {
                 publicKey,
                 privateKey
             );
-        } catch (setupErr: any) {
-            return new Response(JSON.stringify({ error: 'Failed configured VAPID details', details: setupErr.message || setupErr }), {
+        } catch (setupErr) {
+            const details = setupErr instanceof Error ? setupErr.message : String(setupErr);
+            return new Response(JSON.stringify({ error: 'Failed configured VAPID details', details }), {
                 headers: { ...corsHeaders, 'Content-Type': 'application/json' },
                 status: 500,
             });
@@ -92,17 +93,21 @@ serve(async (req: Request) => {
         const results = [];
 
         // Send push to all subscriptions
-        const sendPromises = subscriptions.map(async (subRow: any) => {
+        const sendPromises = subscriptions.map(async (subRow: { id: string; subscription: unknown }) => {
             try {
                 const sub = subRow.subscription;
                 await webpush.sendNotification(sub, notificationPayload);
                 results.push({ id: subRow.id, status: 'success' });
-            } catch (err: any) {
+            } catch (err) {
+                const message = err instanceof Error ? err.message : String(err);
+                const statusCode = typeof err === 'object' && err !== null && 'statusCode' in err
+                    ? (err as { statusCode?: number }).statusCode
+                    : undefined;
                 console.error(`Error sending to subscription ${subRow.id}:`, err);
-                results.push({ id: subRow.id, status: 'failed', error: err.message || err });
+                results.push({ id: subRow.id, status: 'failed', error: message });
 
                 // If subscription is invalid/expired (status 410 or 404), delete it
-                if (err.statusCode === 410 || err.statusCode === 404) {
+                if (statusCode === 410 || statusCode === 404) {
                     await supabaseAdmin
                         .from('push_subscriptions')
                         .delete()
@@ -118,14 +123,16 @@ serve(async (req: Request) => {
             status: 200,
         });
 
-    } catch (error: any) {
+    } catch (error) {
+        const message = error instanceof Error ? error.message : String(error);
+        const stack = error instanceof Error ? error.stack : undefined;
         console.error('Error in send-push function:', error);
 
         // Return explicit error details to frontend
         return new Response(JSON.stringify({
             error: 'Internal Edge Function Error',
-            message: error.message,
-            stack: error.stack
+            message,
+            stack
         }), {
             headers: { ...corsHeaders, 'Content-Type': 'application/json' },
             status: 500,

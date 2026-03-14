@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { supabase } from '@/lib/supabase';
 import { toast } from 'sonner';
 import { playTicketSound, unlockAudio } from '@/lib/notificationSound';
@@ -7,14 +7,7 @@ export function usePushSubscription(ticketId: string | null) {
     const [notificationPermission, setNotificationPermission] = useState(Notification.permission);
     const pushSubscribedRef = useRef(false);
 
-    useEffect(() => {
-        if (ticketId && notificationPermission === 'granted' && !pushSubscribedRef.current) {
-            pushSubscribedRef.current = true;
-            subscribeToWebPush();
-        }
-    }, [ticketId, notificationPermission]);
-
-    const subscribeToWebPush = async () => {
+    const subscribeToWebPush = useCallback(async () => {
         if (!ticketId) return;
         try {
             // 1. Get or Register Service Worker
@@ -30,7 +23,7 @@ export function usePushSubscription(ticketId: string | null) {
 
             // Convert Base64 string to Uint8Array for PushManager
             const padding = '='.repeat((4 - vapidKey.length % 4) % 4);
-            const base64 = (vapidKey + padding).replace(/\-/g, '+').replace(/_/g, '/');
+            const base64 = (vapidKey + padding).replace(/-/g, '+').replace(/_/g, '/');
             const rawData = window.atob(base64);
             const outputArray = new Uint8Array(rawData.length);
             for (let i = 0; i < rawData.length; ++i) {
@@ -61,7 +54,14 @@ export function usePushSubscription(ticketId: string | null) {
             console.error('Push notification setup failed:', error);
             // Don't show an error toast if it's an auto-subscription running in the background, to avoid annoying the user.
         }
-    };
+    }, [ticketId]);
+
+    useEffect(() => {
+        if (ticketId && notificationPermission === 'granted' && !pushSubscribedRef.current) {
+            pushSubscribedRef.current = true;
+            subscribeToWebPush();
+        }
+    }, [ticketId, notificationPermission, subscribeToWebPush]);
 
     const requestNotificationPermission = async () => {
         // Unlock audio context on user interaction
@@ -100,15 +100,15 @@ export function usePushSubscription(ticketId: string | null) {
                     body,
                     icon: '/pwa-icon.svg',
                     vibrate: [200, 100, 200, 100, 200, 100, 200],
-                } as any);
-            } catch (e) {
+                } as NotificationOptions);
+            } catch {
                 // Some mobile browsers require notifications to be sent via ServiceWorker
                 navigator.serviceWorker.ready.then(registration => {
                     registration.showNotification(title, {
                         body,
                         icon: '/pwa-icon.svg',
                         vibrate: [200, 100, 200, 100, 200, 100, 200],
-                    } as any);
+                    } as NotificationOptions);
                 }).catch(err => {
                     console.error('Failed to show notification via service worker', err);
                     toast.info(`📢 ${title}: ${body}`, { duration: 6000 });

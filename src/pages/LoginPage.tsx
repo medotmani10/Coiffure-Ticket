@@ -14,22 +14,34 @@ export default function LoginPage() {
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
 
-    useEffect(() => {
-        checkUser();
-    }, []);
-
-    const checkUser = async () => {
-        const { data: { session } } = await supabase.auth.getSession();
-        if (session?.user) {
-            checkShopExists(session.user.id);
-        }
-    };
-
-    const checkShopExists = async (userId: string) => {
+    async function checkShopExists(userId: string) {
         const { data: shop } = await supabase.from('shops').select('slug').eq('owner_id', userId).single();
         if (shop) navigate('/admin');
         else navigate('/onboarding');
-    };
+    }
+
+    async function checkUser() {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session?.user) {
+            const { data: profile, error: profileError } = await supabase
+                .from('profiles')
+                .select('role')
+                .eq('id', session.user.id)
+                .single();
+
+            if (!profileError && profile?.role === 'barber') {
+                await supabase.auth.signOut();
+                toast.error('هذا الحساب مخصص للحلاق ولا يمكنه الدخول للوحة الإدارة');
+                return;
+            }
+
+            checkShopExists(session.user.id);
+        }
+    }
+
+    useEffect(() => {
+        checkUser();
+    }, []);
 
     const handleAuth = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -45,7 +57,22 @@ export default function LoginPage() {
                 toast.success('تم تسجيل الدخول');
                 // onAuthStateChange in App or here will handle redirect
                 const { data: { user } } = await supabase.auth.getUser();
-                if (user) checkShopExists(user.id);
+                if (user) {
+                    const { data: profile, error: profileError } = await supabase
+                        .from('profiles')
+                        .select('role')
+                        .eq('id', user.id)
+                        .single();
+
+                    if (!profileError && profile?.role === 'barber') {
+                        await supabase.auth.signOut();
+                        toast.error('هذا الحساب مخصص للحلاق ولا يمكنه الدخول للوحة الإدارة');
+                        setLoading(false);
+                        return;
+                    }
+
+                    checkShopExists(user.id);
+                }
             }
         } else {
             const { data: signUpData, error: signUpError } = await supabase.auth.signUp({ email, password });
