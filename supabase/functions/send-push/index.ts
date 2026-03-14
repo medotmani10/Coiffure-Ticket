@@ -151,7 +151,7 @@ serve(async (req: Request) => {
             title: title || 'CoiffureTicket Update',
             body: body || 'Your ticket status has been updated.',
             url: url || '/',
-            icon: '/pwa-icon.svg'
+            icon: '/pwa-icon.png'
         });
 
         const results = [];

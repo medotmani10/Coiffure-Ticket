@@ -98,7 +98,7 @@ export function usePushSubscription(ticketId: string | null) {
             try {
                 new Notification(title, {
                     body,
-                    icon: '/pwa-icon.svg',
+                    icon: '/pwa-icon.png',
                     vibrate: [200, 100, 200, 100, 200, 100, 200],
                 } as NotificationOptions);
             } catch {
@@ -106,7 +106,7 @@ export function usePushSubscription(ticketId: string | null) {
                 navigator.serviceWorker.ready.then(registration => {
                     registration.showNotification(title, {
                         body,
-                        icon: '/pwa-icon.svg',
+                        icon: '/pwa-icon.png',
                         vibrate: [200, 100, 200, 100, 200, 100, 200],
                     } as NotificationOptions);
                 }).catch(err => {
