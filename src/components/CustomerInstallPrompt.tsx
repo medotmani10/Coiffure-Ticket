@@ -74,7 +74,7 @@ export default function CustomerInstallPrompt() {
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
             <DialogContent className="sm:max-w-md bg-zinc-950 border-zinc-800 text-white p-6" dir="rtl">
                 <DialogHeader className="flex flex-col items-center text-center sm:text-center space-y-4 pt-4">
-                    <div className="w-20 h-20 bg-blue-600 rounded-3xl flex items-center justify-center shadow-[0_0_30px_rgba(37,99,235,0.2)] mb-2 relative">
+                    <div className="w-20 h-20 bg-amber-600 rounded-3xl flex items-center justify-center shadow-[0_0_30px_rgba(217,119,6,0.2)] mb-2 relative">
                         <Smartphone className="w-10 h-10 text-white" />
                         <div className="absolute -bottom-2 -right-2 bg-green-500 rounded-full p-1.5 border-4 border-zinc-950">
                             <DownloadCloud className="w-4 h-4 text-black" />
@@ -90,7 +90,7 @@ export default function CustomerInstallPrompt() {
                 <DialogFooter className="flex-col sm:flex-row gap-3 mt-6 sm:space-x-0">
                     <Button
                         onClick={handleInstallClick}
-                        className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold h-12 text-lg rounded-xl"
+                        className="w-full bg-amber-600 hover:bg-amber-500 text-white font-bold h-12 text-lg rounded-xl"
                     >
                         تثبيت التطبيق الآن
                     </Button>

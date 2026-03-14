@@ -4,7 +4,7 @@ import { supabase } from '@/lib/supabase';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Droplets, Loader2, ChevronLeft } from 'lucide-react';
+import { Scissors, Loader2, ChevronLeft } from 'lucide-react';
 import { toast } from 'sonner';
 
 export default function LoginPage() {
@@ -72,17 +72,17 @@ export default function LoginPage() {
     return (
         <div className="min-h-[100dvh] bg-black flex flex-col items-center justify-center p-6 relative overflow-hidden">
             {/* Background decoration */}
-            <div className="absolute top-0 left-0 w-full h-1 bg-blue-600" />
-            <div className="absolute -top-24 -left-24 w-64 h-64 bg-blue-600/10 rounded-full blur-3xl" />
-            <div className="absolute -bottom-24 -right-24 w-64 h-64 bg-blue-600/5 rounded-full blur-3xl" />
+            <div className="absolute top-0 left-0 w-full h-1 bg-amber-600" />
+            <div className="absolute -top-24 -left-24 w-64 h-64 bg-amber-600/10 rounded-full blur-3xl" />
+            <div className="absolute -bottom-24 -right-24 w-64 h-64 bg-amber-600/5 rounded-full blur-3xl" />
 
             <div className="w-full max-w-md space-y-8 relative z-10">
                 <div className="flex flex-col items-center">
                     <div className="flex items-center gap-3 mb-2">
-                        <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center">
-                            <Droplets className="w-6 h-6 text-white" />
+                        <div className="w-10 h-10 bg-amber-600 rounded-xl flex items-center justify-center">
+                            <Scissors className="w-6 h-6 text-white" />
                         </div>
-                        <h1 className="text-2xl font-black tracking-tight text-white">Lavage <span className="text-blue-500">Station</span></h1>
+                        <h1 className="text-2xl font-black tracking-tight text-white">Coiffure <span className="text-amber-500">Station</span></h1>
                     </div>
                     <p className="text-zinc-500 mt-2 font-medium">نظام إدارة صالونات الحلاقة</p>
                 </div>
@@ -92,14 +92,14 @@ export default function LoginPage() {
                         <button
                             type="button"
                             onClick={() => setIsLogin(true)}
-                            className={`flex-1 h-10 rounded-lg text-sm font-black transition-all ${isLogin ? 'bg-blue-600 text-white' : 'text-zinc-500 hover:text-zinc-300'}`}
+                            className={`flex-1 h-10 rounded-lg text-sm font-black transition-all ${isLogin ? 'bg-amber-600 text-white' : 'text-zinc-500 hover:text-zinc-300'}`}
                         >
                             تسجيل الدخول
                         </button>
                         <button
                             type="button"
                             onClick={() => setIsLogin(false)}
-                            className={`flex-1 h-10 rounded-lg text-sm font-black transition-all ${!isLogin ? 'bg-blue-600 text-white' : 'text-zinc-500 hover:text-zinc-300'}`}
+                            className={`flex-1 h-10 rounded-lg text-sm font-black transition-all ${!isLogin ? 'bg-amber-600 text-white' : 'text-zinc-500 hover:text-zinc-300'}`}
                         >
                             حساب جديد
                         </button>
@@ -112,8 +112,8 @@ export default function LoginPage() {
                                 type="email"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
-                                placeholder="you@lavage.com"
-                                className="rounded-xl h-14 bg-black/50 border-zinc-800 focus-visible:ring-blue-500 text-white placeholder:text-zinc-600 text-lg"
+                                placeholder="you@coiffure.com"
+                                className="rounded-xl h-14 bg-black/50 border-zinc-800 focus-visible:ring-amber-500 text-white placeholder:text-zinc-600 text-lg"
                                 required
                             />
                         </div>
@@ -124,7 +124,7 @@ export default function LoginPage() {
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                                 placeholder="••••••••"
-                                className="rounded-xl h-14 bg-black/50 border-zinc-800 focus-visible:ring-blue-500 text-white text-lg"
+                                className="rounded-xl h-14 bg-black/50 border-zinc-800 focus-visible:ring-amber-500 text-white text-lg"
                                 required
                             />
                         </div>
@@ -132,7 +132,7 @@ export default function LoginPage() {
                         <Button
                             type="submit"
                             disabled={loading}
-                            className="w-full rounded-xl h-14 bg-blue-600 hover:bg-blue-500 text-white font-black text-lg transition-all hover:scale-[1.02] shadow-[0_10px_20px_rgba(37,99,235,0.15)] mt-4"
+                            className="w-full rounded-xl h-14 bg-amber-600 hover:bg-amber-500 text-white font-black text-lg transition-all hover:scale-[1.02] shadow-[0_10px_20px_rgba(217,119,6,0.15)] mt-4"
                         >
                             {loading ? (
                                 <Loader2 className="w-6 h-6 animate-spin" />
@@ -150,7 +150,7 @@ export default function LoginPage() {
                         <button
                             type="button"
                             onClick={() => setIsLogin(!isLogin)}
-                            className="text-blue-500 font-bold hover:text-blue-400 transition-colors"
+                            className="text-amber-500 font-bold hover:text-amber-400 transition-colors"
                         >
                             {isLogin ? 'سجل الآن' : 'سجل الدخول'}
                         </button>

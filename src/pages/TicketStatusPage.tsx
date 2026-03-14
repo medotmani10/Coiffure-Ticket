@@ -149,7 +149,7 @@ export default function TicketStatusPage() {
     // ─── LOADING ───
     if (loading) return (
         <div className="min-h-[100dvh] bg-black flex items-center justify-center">
-            <Loader2 className="w-10 h-10 animate-spin text-blue-500" />
+            <Loader2 className="w-10 h-10 animate-spin text-amber-500" />
         </div>
     );
 
@@ -162,7 +162,7 @@ export default function TicketStatusPage() {
                 </div>
                 <h2 className="text-2xl font-black text-white mb-3">التذكرة غير موجودة</h2>
                 <p className="text-zinc-400 mb-8 text-sm">الرابط غير صحيح أو انتهت صلاحية التذكرة</p>
-                <Button onClick={() => navigate('/')} className="w-full h-12 bg-blue-600 hover:bg-blue-500 text-white font-black rounded-xl">
+                <Button onClick={() => navigate('/')} className="w-full h-12 bg-amber-600 hover:bg-amber-500 text-white font-black rounded-xl">
                     الصفحة الرئيسية
                 </Button>
             </div>
@@ -191,10 +191,10 @@ export default function TicketStatusPage() {
 
                 {/* iOS PWA Prompt */}
                 {showIOSPrompt && (
-                    <div className="mb-6 bg-blue-500/10 border border-blue-500/30 rounded-2xl p-4 flex gap-3 text-right">
-                        <ArrowDownToLine className="w-5 h-5 text-blue-400 shrink-0 mt-0.5" />
+                    <div className="mb-6 bg-amber-500/10 border border-amber-500/30 rounded-2xl p-4 flex gap-3 text-right">
+                        <ArrowDownToLine className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
                         <div>
-                            <p className="text-sm font-bold text-blue-400 mb-1">تنبيه لمستخدمي آيفون (iOS)</p>
+                            <p className="text-sm font-bold text-amber-400 mb-1">تنبيه لمستخدمي آيفون (iOS)</p>
                             <p className="text-xs text-zinc-400 leading-relaxed">
                                 لتصلك الإشعارات في الخلفية، يرجى الضغط على زر المشاركة (Share) في الأسفل ثم <span className="font-bold text-white">"إضافة للشاشة الرئيسية" (Add to Home Screen)</span> لفتحنا كتطبيق.
                             </p>

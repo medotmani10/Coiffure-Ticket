@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { Button } from '@/components/ui/button';
-import { Loader2, CheckCircle, XCircle, Store, LogOut } from 'lucide-react';
+import { Loader2, CheckCircle, XCircle, Scissors, LogOut } from 'lucide-react';
 import { toast } from 'sonner';
 
 const ADMIN_EMAIL = 'med.otmani5@gmail.com';
@@ -80,7 +80,7 @@ export default function SuperAdminDashboard() {
     if (loading) {
         return (
             <div className="min-h-screen bg-black flex items-center justify-center">
-                <Loader2 className="w-10 h-10 animate-spin text-blue-500" />
+                <Loader2 className="w-10 h-10 animate-spin text-amber-500" />
             </div>
         );
     }
@@ -91,7 +91,7 @@ export default function SuperAdminDashboard() {
                 <header className="flex justify-between items-center mb-8 bg-zinc-900/50 p-6 rounded-2xl border border-zinc-800">
                     <div>
                         <h1 className="text-3xl font-black flex items-center gap-3">
-                            <Store className="text-blue-500" /> لوحة تحكم الإدارة
+                            <Scissors className="text-amber-500" /> لوحة تحكم الإدارة
                         </h1>
                         <p className="text-zinc-500 mt-1">مرحباً بك: {userEmail}</p>
                     </div>
@@ -117,8 +117,8 @@ export default function SuperAdminDashboard() {
                                     <td className="p-4 text-xs text-zinc-500 font-mono">{shop.owner_id}</td>
                                     <td className="p-4 text-center">
                                         <span className={`px-3 py-1 rounded-full text-xs font-bold ${shop.status === 'approved' ? 'bg-green-500/10 text-green-500 border border-green-500/20' :
-                                                shop.status === 'rejected' ? 'bg-red-500/10 text-red-500 border border-red-500/20' :
-                                                    'bg-yellow-500/10 text-yellow-500 border border-yellow-500/20'
+                                            shop.status === 'rejected' ? 'bg-red-500/10 text-red-500 border border-red-500/20' :
+                                                'bg-yellow-500/10 text-yellow-500 border border-yellow-500/20'
                                             }`}>
                                             {shop.status === 'approved' ? 'مقبول' :
                                                 shop.status === 'rejected' ? 'مرفوض' : 'قيد الانتظار'}

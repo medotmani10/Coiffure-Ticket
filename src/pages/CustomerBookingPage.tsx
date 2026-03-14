@@ -208,7 +208,7 @@ export default function CustomerBookingPage() {
   // ─── LOADING ───
   if (loading) return (
     <div className="min-h-[100dvh] bg-black flex items-center justify-center">
-      <Loader2 className="w-10 h-10 animate-spin text-blue-400" />
+      <Loader2 className="w-10 h-10 animate-spin text-amber-400" />
     </div>
   );
 
@@ -221,7 +221,7 @@ export default function CustomerBookingPage() {
         </div>
         <h2 className="text-2xl font-black text-white mb-3">الصالون غير موجود</h2>
         <p className="text-zinc-400 mb-8">الرابط غير صحيح أو الصالون لم يعد متاحاً</p>
-        <Button onClick={() => navigate('/')} className="w-full h-12 bg-blue-500 hover:bg-blue-400 text-white font-black rounded-xl">العودة للرئيسية</Button>
+        <Button onClick={() => navigate('/')} className="w-full h-12 bg-amber-500 hover:bg-amber-400 text-white font-black rounded-xl">العودة للرئيسية</Button>
       </div>
     </div>
   );
@@ -268,7 +268,7 @@ export default function CustomerBookingPage() {
 
         {/* Shop Header */}
         <div className="bg-zinc-900 border border-zinc-800 rounded-2xl overflow-hidden mb-5">
-          <div className="h-1 bg-blue-500 w-full" />
+          <div className="h-1 bg-amber-500 w-full" />
           <div className="p-6 text-center">
             {shop.logo_url
               ? <img src={shop.logo_url} alt={shop.name} className="w-20 h-20 object-contain rounded-xl border border-zinc-700 mx-auto mb-4 p-2 bg-zinc-800" />
@@ -278,13 +278,13 @@ export default function CustomerBookingPage() {
             <div className="flex flex-wrap items-center justify-center gap-3">
               {shop.maps_url && (
                 <Button variant="ghost" size="sm" onClick={() => window.open(shop.maps_url!, '_blank')}
-                  className="text-blue-400 hover:text-blue-300 hover:bg-blue-400/10 rounded-xl font-bold text-xs">
+                  className="text-amber-400 hover:text-amber-300 hover:bg-amber-400/10 rounded-xl font-bold text-xs">
                   <MapPin className="w-4 h-4 mr-1" /> الموقع
                 </Button>
               )}
               {shop.phone && (
                 <Button variant="ghost" size="sm" onClick={() => window.open(`tel:${shop.phone}`, '_self')}
-                  className="text-blue-400 hover:text-blue-300 hover:bg-blue-400/10 rounded-xl font-bold text-xs">
+                  className="text-amber-400 hover:text-amber-300 hover:bg-amber-400/10 rounded-xl font-bold text-xs">
                   <Phone className="w-4 h-4 mr-1" /> {shop.phone}
                 </Button>
               )}
@@ -309,19 +309,19 @@ export default function CustomerBookingPage() {
             {/* Name */}
             <div className="space-y-2">
               <Label className="flex items-center gap-2 text-zinc-300 text-sm font-bold">
-                <User className="w-4 h-4 text-blue-500" /> الاسم الكامل
+                <User className="w-4 h-4 text-amber-500" /> الاسم الكامل
               </Label>
               <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="محمد أحمد"
-                className="rounded-xl h-12 bg-black border-zinc-700 focus-visible:ring-blue-500 text-white placeholder:text-zinc-600" required />
+                className="rounded-xl h-12 bg-black border-zinc-700 focus-visible:ring-amber-500 text-white placeholder:text-zinc-600" required />
             </div>
 
             {/* Phone */}
             <div className="space-y-2">
               <Label className="flex items-center gap-2 text-zinc-300 text-sm font-bold">
-                <Phone className="w-4 h-4 text-blue-500" /> رقم الهاتف
+                <Phone className="w-4 h-4 text-amber-500" /> رقم الهاتف
               </Label>
               <Input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="05xxxxxxxx"
-                className="rounded-xl h-12 bg-black border-zinc-700 focus-visible:ring-blue-500 text-white placeholder:text-zinc-600 text-left"
+                className="rounded-xl h-12 bg-black border-zinc-700 focus-visible:ring-amber-500 text-white placeholder:text-zinc-600 text-left"
                 dir="ltr" required type="tel" />
             </div>
 

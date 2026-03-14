@@ -22,21 +22,21 @@ function StatCard({ label, value, color, sub }: { label: string; value: number; 
     <div className={cn(
       'relative overflow-hidden rounded-2xl border p-5 flex flex-col gap-1 group cursor-default',
       'bg-zinc-950 transition-all duration-300 hover:-translate-y-1',
-      color === 'blue' && 'border-blue-500/20 hover:border-blue-500/50 hover:shadow-[0_8px_32px_-4px_rgba(59,130,246,0.25)]',
+      color === 'blue' && 'border-amber-500/20 hover:border-amber-500/50 hover:shadow-[0_8px_32px_-4px_rgba(245,158,11,0.25)]',
       color === 'cyan' && 'border-cyan-500/20  hover:border-cyan-500/50  hover:shadow-[0_8px_32px_-4px_rgba(6,182,212,0.2)]',
       color === 'zinc' && 'border-zinc-700/40   hover:border-zinc-500/40   hover:shadow-[0_8px_32px_-4px_rgba(120,120,120,0.15)]',
     )}>
       {/* glow blob */}
       <div className={cn(
         'absolute -top-6 -right-6 w-24 h-24 rounded-full blur-2xl opacity-0 group-hover:opacity-30 transition-opacity duration-500',
-        color === 'blue' && 'bg-blue-500',
+        color === 'blue' && 'bg-amber-500',
         color === 'cyan' && 'bg-cyan-500',
         color === 'zinc' && 'bg-zinc-400',
       )} />
       <p className="text-xs text-zinc-500 font-semibold uppercase tracking-widest">{label}</p>
       <p className={cn(
         'text-5xl font-black tracking-tight',
-        color === 'blue' && 'text-blue-500',
+        color === 'blue' && 'text-amber-500',
         color === 'cyan' && 'text-cyan-500',
         color === 'zinc' && 'text-zinc-200',
       )}>{value}</p>
@@ -54,9 +54,9 @@ function QuickLinks({ shop }: { shop: Shop }) {
       title: 'رابط الزبائن',
       desc: 'للحجز والانضمام للطابور',
       url: `${customerBase}/${shop.slug}`,
-      icon: <Users className="w-5 h-5 text-blue-400" />,
-      themeClasses: 'hover:border-blue-500/30 hover:shadow-[0_8px_32px_-4px_rgba(59,130,246,0.15)]',
-      iconClasses: 'bg-blue-500/10 border-blue-500/20'
+      icon: <Users className="w-5 h-5 text-amber-400" />,
+      themeClasses: 'hover:border-amber-500/30 hover:shadow-[0_8px_32px_-4px_rgba(245,158,11,0.15)]',
+      iconClasses: 'bg-amber-500/10 border-amber-500/20'
     }
   ];
 
@@ -352,7 +352,7 @@ export default function AdminDashboard() {
   if (loading) return (
     <div className="min-h-[100dvh] bg-black flex items-center justify-center">
       <div className="flex flex-col items-center gap-4">
-        <Loader2 className="w-10 h-10 animate-spin text-blue-500" />
+        <Loader2 className="w-10 h-10 animate-spin text-amber-500" />
         <p className="text-zinc-500 text-sm font-semibold">جاري التحميل…</p>
       </div>
     </div>
@@ -479,7 +479,7 @@ export default function AdminDashboard() {
                 className={cn(
                   'w-10 h-10 md:w-9 md:h-9 rounded-xl flex items-center justify-center border transition-all',
                   soundEnabled
-                    ? 'border-blue-500/40 text-blue-500 bg-blue-500/10 hover:bg-blue-500/20'
+                    ? 'border-amber-500/40 text-amber-500 bg-amber-500/10 hover:bg-amber-500/20'
                     : 'border-zinc-800 text-zinc-600 bg-zinc-950 hover:border-zinc-600'
                 )}
               >
@@ -487,11 +487,11 @@ export default function AdminDashboard() {
               </button>
 
               <button onClick={() => navigate('/admin/settings')}
-                className="w-10 h-10 md:w-9 md:h-9 rounded-xl flex items-center justify-center border border-zinc-800 text-zinc-500 hover:text-blue-500 hover:border-zinc-600 transition-all bg-zinc-950 hover:bg-zinc-900">
+                className="w-10 h-10 md:w-9 md:h-9 rounded-xl flex items-center justify-center border border-zinc-800 text-zinc-500 hover:text-amber-500 hover:border-zinc-600 transition-all bg-zinc-950 hover:bg-zinc-900">
                 <Settings className="w-5 h-5 md:w-4 md:h-4" />
               </button>
               <button onClick={() => navigate('/admin/archive')}
-                className="w-10 h-10 md:w-9 md:h-9 rounded-xl flex items-center justify-center border border-zinc-800 text-zinc-500 hover:text-blue-500 hover:border-zinc-600 transition-all bg-zinc-950 hover:bg-zinc-900">
+                className="w-10 h-10 md:w-9 md:h-9 rounded-xl flex items-center justify-center border border-zinc-800 text-zinc-500 hover:text-amber-500 hover:border-zinc-600 transition-all bg-zinc-950 hover:bg-zinc-900">
                 <Archive className="w-5 h-5 md:w-4 md:h-4" />
               </button>
 
@@ -581,9 +581,9 @@ export default function AdminDashboard() {
             disabled={isProcessing}
             className={cn(
               'w-full rounded-2xl h-14 md:h-[4.5rem] flex items-center justify-center gap-3 font-black text-xl text-white',
-              'bg-blue-600 hover:bg-blue-500 active:scale-[0.98]',
-              'transition-all duration-150 shadow-[0_4px_24px_-4px_rgba(59,130,246,0.5)]',
-              'hover:shadow-[0_10px_36px_-4px_rgba(59,130,246,0.6)]',
+              'bg-amber-600 hover:bg-amber-500 active:scale-[0.98]',
+              'transition-all duration-150 shadow-[0_4px_24px_-4px_rgba(245,158,11,0.5)]',
+              'hover:shadow-[0_10px_36px_-4px_rgba(245,158,11,0.6)]',
               'disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none',
             )}
           >
@@ -610,22 +610,22 @@ export default function AdminDashboard() {
             </SheetTrigger>
             <SheetContent side="bottom" className="rounded-t-[2rem] h-auto max-h-[92vh] bg-zinc-950 border-zinc-800 p-6" dir="rtl">
               <SheetHeader className="pb-5">
-                <SheetTitle className="text-center text-xl font-black text-white flex items-center justify-center gap-2">إضافة زبون للطابور <User className="w-6 h-6 text-blue-500" /></SheetTitle>
+                <SheetTitle className="text-center text-xl font-black text-white flex items-center justify-center gap-2">إضافة زبون للطابور <User className="w-6 h-6 text-amber-500" /></SheetTitle>
               </SheetHeader>
               <form onSubmit={handleManualTicket} className="space-y-4 max-w-md mx-auto">
                 <div className="space-y-2">
                   <Label className="text-zinc-300 text-sm font-bold">اسم الزبون</Label>
                   <Input value={manualName} onChange={(e) => setManualName(e.target.value)} placeholder="مثال: محمد أحمد"
-                    className="rounded-xl h-12 bg-black border-zinc-700 text-white focus-visible:ring-blue-500 placeholder:text-zinc-600" />
+                    className="rounded-xl h-12 bg-black border-zinc-700 text-white focus-visible:ring-amber-500 placeholder:text-zinc-600" />
                 </div>
                 <div className="space-y-2">
                   <Label className="text-zinc-300 text-sm font-bold">رقم الهاتف (اختياري)</Label>
                   <Input value={manualPhone} onChange={(e) => setManualPhone(e.target.value)} placeholder="05xxxxxxxx"
-                    className="rounded-xl h-12 bg-black border-zinc-700 text-white focus-visible:ring-blue-500 text-left" dir="ltr" />
+                    className="rounded-xl h-12 bg-black border-zinc-700 text-white focus-visible:ring-amber-500 text-left" dir="ltr" />
                 </div>
                 <div className="space-y-2 flex items-center justify-between border-t border-zinc-800 pt-4 mt-2">
                   <Label className="flex items-center gap-2 text-zinc-300 text-sm font-bold">
-                    <User className="w-4 h-4 text-blue-500" /> عدد الأشخاص (إختياري)
+                    <User className="w-4 h-4 text-amber-500" /> عدد الأشخاص (إختياري)
                   </Label>
                   <div className="flex bg-black rounded-lg border border-zinc-700 overflow-hidden">
                     <button type="button" onClick={() => setManualCarCount(Math.max(1, manualCarCount - 1))} className="w-10 h-10 flex items-center justify-center text-zinc-400 hover:bg-zinc-800 hover:text-white transition-colors cursor-pointer">-</button>
@@ -640,7 +640,7 @@ export default function AdminDashboard() {
                     {manualBarberNames.map((barberName, index) => (
                       <div key={index} className="space-y-2">
                         <Label className="flex items-center gap-2 text-zinc-300 text-sm font-bold">
-                          <Scissors className="w-4 h-4 text-blue-500" /> {manualCarCount > 1 ? `الحلاق المطلوب ${index + 1}` : 'الحلاق المطلوب'}
+                          <Scissors className="w-4 h-4 text-amber-500" /> {manualCarCount > 1 ? `الحلاق المطلوب ${index + 1}` : 'الحلاق المطلوب'}
                         </Label>
                         <Input
                           value={barberName}
@@ -650,7 +650,7 @@ export default function AdminDashboard() {
                             setManualBarberNames(newBarbers);
                           }}
                           placeholder="مثال: أيوب"
-                          className="rounded-xl h-12 bg-black border-zinc-700 focus-visible:ring-blue-500 text-white placeholder:text-zinc-600"
+                          className="rounded-xl h-12 bg-black border-zinc-700 focus-visible:ring-amber-500 text-white placeholder:text-zinc-600"
                         />
                       </div>
                     ))}
@@ -664,7 +664,7 @@ export default function AdminDashboard() {
                   className={cn(
                     'w-full flex items-center justify-between px-4 py-3 rounded-xl border transition-all duration-200 mt-4',
                     autoPrint
-                      ? 'bg-blue-500/10 border-blue-500/30 text-blue-500'
+                      ? 'bg-amber-500/10 border-amber-500/30 text-amber-500'
                       : 'bg-black border-zinc-800 text-zinc-500 hover:border-zinc-600'
                   )}
                 >
@@ -674,7 +674,7 @@ export default function AdminDashboard() {
                   </div>
                   <div className={cn(
                     'w-10 h-5 rounded-full transition-all duration-300 relative',
-                    autoPrint ? 'bg-blue-500' : 'bg-zinc-700'
+                    autoPrint ? 'bg-amber-500' : 'bg-zinc-700'
                   )}>
                     <div className={cn(
                       'w-4 h-4 rounded-full bg-white absolute top-0.5 transition-all duration-300',
@@ -687,8 +687,8 @@ export default function AdminDashboard() {
                   'w-full rounded-xl h-14 font-black text-lg text-white mt-2',
                   'transition-all duration-150 active:scale-[0.98]',
                   autoPrint
-                    ? 'bg-blue-600 hover:bg-blue-500 shadow-[0_4px_16px_-2px_rgba(59,130,246,0.5)]'
-                    : 'bg-blue-600 hover:bg-blue-500',
+                    ? 'bg-amber-600 hover:bg-amber-500 shadow-[0_4px_16px_-2px_rgba(245,158,11,0.5)]'
+                    : 'bg-amber-600 hover:bg-amber-500',
                 )}>
                   <span className="flex items-center justify-center gap-2">
                     {autoPrint ? <Printer className="w-5 h-5" /> : <Plus className="w-5 h-5" />}
@@ -753,10 +753,10 @@ export default function AdminDashboard() {
           <div className="space-y-4">
             <div className="flex items-center justify-between border-b border-zinc-800 pb-2">
               <h3 className="font-black text-white text-lg flex items-center gap-2">
-                <Users className="w-5 h-5 text-blue-500" />
+                <Users className="w-5 h-5 text-amber-500" />
                 قائمة الانتظار
               </h3>
-              <span className="bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-black px-2.5 py-1 rounded-full">
+              <span className="bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-black px-2.5 py-1 rounded-full">
                 {waitingCount}
               </span>
             </div>
@@ -771,14 +771,14 @@ export default function AdminDashboard() {
                 {waitingTickets.map((t: Ticket, i: number) => (
                   <div key={t.id} onClick={() => setSelectedTicketDetails(t)} className={cn(
                     'flex items-center justify-between p-4 rounded-xl border border-zinc-800',
-                    'bg-black hover:bg-zinc-900/80 hover:border-blue-500/30 transition-all duration-200 cursor-pointer group',
+                    'bg-black hover:bg-zinc-900/80 hover:border-amber-500/30 transition-all duration-200 cursor-pointer group',
                   )}>
                     <div className="flex items-center gap-4">
-                      <span className="w-11 h-11 flex items-center justify-center rounded-xl bg-zinc-900 border border-zinc-800 font-black text-zinc-500 text-base group-hover:border-blue-500/30 group-hover:text-blue-500 transition-colors shrink-0">
+                      <span className="w-11 h-11 flex items-center justify-center rounded-xl bg-zinc-900 border border-zinc-800 font-black text-zinc-500 text-base group-hover:border-amber-500/30 group-hover:text-amber-500 transition-colors shrink-0">
                         {i + 1}
                       </span>
                       <div>
-                        <p className="font-black text-white text-lg leading-tight group-hover:text-blue-400 transition-colors">
+                        <p className="font-black text-white text-lg leading-tight group-hover:text-amber-400 transition-colors">
                           <span className="text-zinc-600 text-base ml-1">#</span>{t.ticket_number}
                         </p>
                         <p className="text-sm text-zinc-500 truncate max-w-[150px] sm:max-w-[200px]">{t.customer_name}</p>
@@ -803,7 +803,7 @@ export default function AdminDashboard() {
       <Dialog open={!!selectedTicketDetails} onOpenChange={(o) => !o && setSelectedTicketDetails(null)}>
         <DialogContent className="bg-zinc-950 border-zinc-800 text-white rounded-2xl w-[90vw] max-w-sm p-6" dir="rtl">
           <DialogHeader>
-            <DialogTitle className="text-xl font-black text-right text-blue-500">تفاصيل الزبون</DialogTitle>
+            <DialogTitle className="text-xl font-black text-right text-amber-500">تفاصيل الزبون</DialogTitle>
             <DialogDescription className="text-zinc-400 text-sm text-right mt-1">
               رقم التذكرة: {selectedTicketDetails ? selectedTicketDetails.ticket_number : ''}
             </DialogDescription>
@@ -862,7 +862,7 @@ export default function AdminDashboard() {
                     createdAt: new Date(selectedTicketDetails.created_at)
                   });
                 }}
-                className="w-full bg-blue-600 hover:bg-blue-500 text-white font-black py-6 rounded-xl shadow-lg shadow-blue-500/20 mt-2"
+                className="w-full bg-amber-600 hover:bg-amber-500 text-white font-black py-6 rounded-xl shadow-lg shadow-amber-500/20 mt-2"
               >
                 <Printer className="w-5 h-5 ml-2" />
                 طباعة التذكرة

@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Store, MapPin, Upload, ArrowRight, Save, Loader2, Smartphone } from 'lucide-react';
+import { Scissors, MapPin, Upload, ArrowRight, Save, Loader2, Smartphone } from 'lucide-react';
 import { toast } from 'sonner';
 import { compressImage } from '@/lib/imageCompression';
 
@@ -162,8 +162,8 @@ export default function AdminSettingsPage() {
     if (loading) {
         return (
             <div className="min-h-[100dvh] bg-zinc-950 flex flex-col items-center justify-center">
-                <Loader2 className="w-12 h-12 text-blue-500 animate-spin mb-4" />
-                <p className="text-blue-500/80 font-medium">جاري تحميل الإعدادات...</p>
+                <Loader2 className="w-12 h-12 text-amber-500 animate-spin mb-4" />
+                <p className="text-amber-500/80 font-medium">جاري تحميل الإعدادات...</p>
             </div>
         );
     }
@@ -176,7 +176,7 @@ export default function AdminSettingsPage() {
             <header className="sticky top-0 z-50 bg-black/80 backdrop-blur-xl border-b border-zinc-800 relative mb-8">
                 <div className="max-w-4xl mx-auto px-4 h-20 flex items-center justify-between">
                     <div className="flex items-center gap-4">
-                        <h1 className="font-black text-2xl text-white">إعدادات <span className="text-blue-500">النظام</span></h1>
+                        <h1 className="font-black text-2xl text-white">إعدادات <span className="text-amber-500">النظام</span></h1>
                     </div>
                     <Button
                         variant="ghost"
@@ -192,10 +192,10 @@ export default function AdminSettingsPage() {
             <div className="max-w-4xl mx-auto px-4 relative z-10 space-y-8">
                 {/* Shop Settings */}
                 <Card className="rounded-[2.5rem] border border-zinc-800/80 bg-zinc-950/50 backdrop-blur-xl shadow-2xl overflow-hidden relative group">
-                    <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <div className="absolute inset-0 bg-gradient-to-br from-amber-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                     <CardHeader className="border-b border-zinc-800/80 pb-6">
                         <CardTitle className="flex items-center gap-3 text-2xl text-white">
-                            <Store className="w-7 h-7 text-blue-500" />
+                            <Scissors className="w-7 h-7 text-amber-500" />
                             معلومات المحطة الأساسية
                         </CardTitle>
                     </CardHeader>
@@ -207,7 +207,7 @@ export default function AdminSettingsPage() {
                                     <>
                                         <img src={logoPreview} alt="Shop Logo" className="w-full h-full object-cover" />
                                         <div className="absolute inset-0 bg-black/60 flex items-center justify-center opacity-0 group-hover/logo:opacity-100 transition-opacity">
-                                            <Upload className="w-8 h-8 text-blue-500" />
+                                            <Upload className="w-8 h-8 text-amber-500" />
                                         </div>
                                     </>
                                 ) : (
@@ -235,20 +235,20 @@ export default function AdminSettingsPage() {
                                 value={shopName}
                                 onChange={(e) => setShopName(e.target.value)}
                                 placeholder="اسم المحطة..."
-                                className="rounded-2xl h-14 bg-black/50 border-zinc-800 focus-visible:ring-blue-500 focus-visible:border-blue-500/50 text-white placeholder:text-zinc-700 text-lg transition-all hover:border-zinc-700"
+                                className="rounded-2xl h-14 bg-black/50 border-zinc-800 focus-visible:ring-amber-500 focus-visible:border-amber-500/50 text-white placeholder:text-zinc-700 text-lg transition-all hover:border-zinc-700"
                             />
                         </div>
 
                         <div className="space-y-4">
                             <Label className="text-zinc-300 font-medium text-base ml-2 flex items-center gap-2">
                                 رابط خرائط Google
-                                <MapPin className="w-4 h-4 text-blue-500" />
+                                <MapPin className="w-4 h-4 text-amber-500" />
                             </Label>
                             <Input
                                 value={mapsUrl}
                                 onChange={(e) => setMapsUrl(e.target.value)}
                                 placeholder="https://maps.google.com/..."
-                                className="rounded-2xl h-14 bg-black/50 border-zinc-800 focus-visible:ring-blue-500 focus-visible:border-blue-500/50 text-white placeholder:text-zinc-700 text-lg transition-all hover:border-zinc-700 text-left"
+                                className="rounded-2xl h-14 bg-black/50 border-zinc-800 focus-visible:ring-amber-500 focus-visible:border-amber-500/50 text-white placeholder:text-zinc-700 text-lg transition-all hover:border-zinc-700 text-left"
                                 dir="ltr"
                             />
                         </div>
@@ -256,13 +256,13 @@ export default function AdminSettingsPage() {
                         <div className="space-y-4">
                             <Label className="text-zinc-300 font-medium text-base ml-2 flex items-center gap-2">
                                 رقم هاتف المحطة
-                                <Smartphone className="w-4 h-4 text-blue-500" />
+                                <Smartphone className="w-4 h-4 text-amber-500" />
                             </Label>
                             <Input
                                 value={shopPhone}
                                 onChange={(e) => setShopPhone(e.target.value)}
                                 placeholder="05xxxxxxxx"
-                                className="rounded-2xl h-14 bg-black/50 border-zinc-800 focus-visible:ring-blue-500 focus-visible:border-blue-500/50 text-white placeholder:text-zinc-700 text-lg transition-all hover:border-zinc-700 text-left"
+                                className="rounded-2xl h-14 bg-black/50 border-zinc-800 focus-visible:ring-amber-500 focus-visible:border-amber-500/50 text-white placeholder:text-zinc-700 text-lg transition-all hover:border-zinc-700 text-left"
                                 dir="ltr"
                                 type="tel"
                             />
@@ -271,7 +271,7 @@ export default function AdminSettingsPage() {
                         <Button
                             onClick={saveShopSettings}
                             disabled={saving}
-                            className="w-full rounded-2xl h-16 bg-blue-500 hover:bg-blue-600 text-white text-lg font-black mt-4 shadow-[0_0_20px_rgba(59,130,246,0.2)] transition-all hover:scale-[1.01] hover:shadow-[0_0_30px_rgba(59,130,246,0.4)] border-none"
+                            className="w-full rounded-2xl h-16 bg-amber-500 hover:bg-amber-600 text-white text-lg font-black mt-4 shadow-[0_0_20px_rgba(245,158,11,0.2)] transition-all hover:scale-[1.01] hover:shadow-[0_0_30px_rgba(245,158,11,0.4)] border-none"
                         >
                             {saving ? (
                                 <Loader2 className="w-6 h-6 animate-spin" />

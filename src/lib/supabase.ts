@@ -6,7 +6,7 @@ const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 // ✅ FIXED H-5: fail fast instead of silently using empty strings
 if (!supabaseUrl || !supabaseAnonKey) {
   throw new Error(
-    '[Lavage Ticket] Missing required env variables: VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY must be set in your .env file.'
+    '[Coiffure Ticket] Missing required env variables: VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY must be set in your .env file.'
   );
 }
 

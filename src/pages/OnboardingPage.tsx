@@ -5,7 +5,7 @@ import { supabase } from '@/lib/supabase';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Upload, Store, MapPin, Smartphone, Check, Droplets } from 'lucide-react';
+import { Upload, Store, MapPin, Smartphone, Check, Scissors } from 'lucide-react';
 import { toast } from 'sonner';
 import { compressImage } from '@/lib/imageCompression';
 
@@ -141,21 +141,21 @@ export default function OnboardingPage() {
   };
 
   return (
-    <div className="min-h-[100dvh] bg-black text-white p-4 relative overflow-hidden flex items-center selection:bg-blue-500/30">
+    <div className="min-h-[100dvh] bg-black text-white p-4 relative overflow-hidden flex items-center selection:bg-amber-500/30">
       {/* Background patterns */}
       <div className="absolute inset-0 z-0">
-        <div className="absolute top-0 left-0 w-full h-1 bg-blue-600" />
-        <div className="absolute -top-24 -left-24 w-96 h-96 bg-blue-600/10 rounded-full blur-[100px] opacity-50" />
-        <div className="absolute -bottom-24 -right-24 w-96 h-96 bg-blue-600/5 rounded-full blur-[100px] opacity-30" />
+        <div className="absolute top-0 left-0 w-full h-1 bg-amber-600" />
+        <div className="absolute -top-24 -left-24 w-96 h-96 bg-amber-600/10 rounded-full blur-[100px] opacity-50" />
+        <div className="absolute -bottom-24 -right-24 w-96 h-96 bg-amber-600/5 rounded-full blur-[100px] opacity-30" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-zinc-900/40 via-transparent to-transparent opacity-50" />
       </div>
 
       <div className="max-w-xl mx-auto w-full relative z-10 py-10">
         <div className="flex flex-col items-center mb-8">
-          <div className="w-16 h-16 bg-blue-600 rounded-2xl flex items-center justify-center shadow-[0_0_20px_rgba(37,99,235,0.3)] mb-6 animate-in zoom-in duration-500">
-            <Droplets className="w-8 h-8 text-white" />
+          <div className="w-16 h-16 bg-amber-600 rounded-2xl flex items-center justify-center shadow-[0_0_20px_rgba(217,119,6,0.3)] mb-6 animate-in zoom-in duration-500">
+            <Scissors className="w-8 h-8 text-white" />
           </div>
-          <h1 className="text-3xl font-black text-white tracking-tight">Lavage <span className="text-blue-500">Ticket</span></h1>
+          <h1 className="text-3xl font-black text-white tracking-tight">Coiffure <span className="text-amber-500">Ticket</span></h1>
           <p className="text-zinc-500 mt-2 font-medium">ابدأ رحلة محطتك الرقمية الآن</p>
         </div>
 
@@ -174,41 +174,41 @@ export default function OnboardingPage() {
 
             <div className="space-y-3">
               <Label className="flex items-center gap-2 text-zinc-400 font-bold mr-1">
-                <Store className="w-4 h-4 text-blue-500" />
+                <Store className="w-4 h-4 text-amber-500" />
                 اسم المحطة
               </Label>
               <Input
                 value={shopName}
                 onChange={(e) => setShopName(e.target.value)}
                 placeholder="مثال: صالون الحلاقة الأنيق"
-                className="rounded-2xl h-14 bg-black/50 border-zinc-800 text-white focus-visible:ring-blue-500 placeholder:text-zinc-600 text-lg"
+                className="rounded-2xl h-14 bg-black/50 border-zinc-800 text-white focus-visible:ring-amber-500 placeholder:text-zinc-600 text-lg"
               />
             </div>
 
             <div className="space-y-3">
               <Label className="flex items-center gap-2 text-zinc-400 font-bold mr-1">
-                <MapPin className="w-4 h-4 text-blue-500" />
+                <MapPin className="w-4 h-4 text-amber-500" />
                 رابط خرائط Google (اختياري)
               </Label>
               <Input
                 value={mapsUrl}
                 onChange={(e) => setMapsUrl(e.target.value)}
                 placeholder="https://maps.google.com/..."
-                className="rounded-2xl h-14 bg-black/50 border-zinc-800 text-white focus-visible:ring-blue-500 placeholder:text-zinc-600 text-left"
+                className="rounded-2xl h-14 bg-black/50 border-zinc-800 text-white focus-visible:ring-amber-500 placeholder:text-zinc-600 text-left"
                 dir="ltr"
               />
             </div>
 
             <div className="space-y-3">
               <Label className="flex items-center gap-2 text-zinc-400 font-bold mr-1">
-                <Smartphone className="w-4 h-4 text-blue-500" />
+                <Smartphone className="w-4 h-4 text-amber-500" />
                 رقم هاتف المحطة (اختياري)
               </Label>
               <Input
                 value={shopPhone}
                 onChange={(e) => setShopPhone(e.target.value)}
                 placeholder="05xxxxxxxx"
-                className="rounded-2xl h-14 bg-black/50 border-zinc-800 text-white focus-visible:ring-blue-500 placeholder:text-zinc-600 text-left"
+                className="rounded-2xl h-14 bg-black/50 border-zinc-800 text-white focus-visible:ring-amber-500 placeholder:text-zinc-600 text-left"
                 dir="ltr"
                 type="tel"
               />
@@ -216,18 +216,18 @@ export default function OnboardingPage() {
 
             <div className="space-y-3">
               <Label className="flex items-center gap-2 text-zinc-400 font-bold mr-1">
-                <Upload className="w-4 h-4 text-blue-500" />
+                <Upload className="w-4 h-4 text-amber-500" />
                 شعار المحطة (اختياري)
               </Label>
               <div className="flex items-center gap-4">
                 <label className="flex-1 group">
-                  <div className="border-2 border-dashed border-zinc-800 rounded-2xl p-8 text-center cursor-pointer hover:border-blue-500/50 hover:bg-blue-500/5 transition-all bg-black/50">
+                  <div className="border-2 border-dashed border-zinc-800 rounded-2xl p-8 text-center cursor-pointer hover:border-amber-500/50 hover:bg-amber-500/5 transition-all bg-black/50">
                     {logoPreview ? (
                       <img src={logoPreview} alt="Logo preview" className="w-24 h-24 object-contain mx-auto rounded-xl" />
                     ) : (
                       <>
-                        <div className="w-16 h-16 bg-zinc-900 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:bg-blue-500/10 group-hover:text-blue-500 transition-colors border border-zinc-800 group-hover:border-blue-500/20">
-                          <Upload className="w-8 h-8 text-zinc-500 group-hover:text-blue-500 transition-colors" />
+                        <div className="w-16 h-16 bg-zinc-900 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:bg-amber-500/10 group-hover:text-amber-500 transition-colors border border-zinc-800 group-hover:border-amber-500/20">
+                          <Upload className="w-8 h-8 text-zinc-500 group-hover:text-amber-500 transition-colors" />
                         </div>
                         <span className="text-sm text-zinc-500 font-medium tracking-wide">اضغط لاختيار صورة الشعار</span>
                       </>
@@ -245,7 +245,7 @@ export default function OnboardingPage() {
 
             <Button
               onClick={handleSubmit}
-              className="w-full rounded-2xl h-16 bg-blue-600 hover:bg-blue-500 text-white text-xl font-black mt-8 shadow-[0_10px_20px_rgba(37,99,235,0.15)] transition-all hover:scale-[1.02]"
+              className="w-full rounded-2xl h-16 bg-amber-600 hover:bg-amber-500 text-white text-xl font-black mt-8 shadow-[0_10px_20px_rgba(217,119,6,0.15)] transition-all hover:scale-[1.02]"
               disabled={!shopName.trim() || loading}
             >
               {loading ? (

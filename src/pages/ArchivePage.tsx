@@ -153,7 +153,7 @@ export default function ArchivePage() {
   if (loading) {
     return (
       <div className="min-h-[100dvh] bg-zinc-950 flex items-center justify-center">
-        <Loader2 className="w-10 h-10 animate-spin text-blue-500" />
+        <Loader2 className="w-10 h-10 animate-spin text-amber-500" />
       </div>
     );
   }
@@ -178,7 +178,7 @@ export default function ArchivePage() {
             </Button>
             <div>
               <h1 className="font-bold text-lg text-white">الأرشيف</h1>
-              <p className="text-xs text-blue-400/80">سجل التذاكر المكتملة والملغية</p>
+              <p className="text-xs text-amber-400/80">سجل التذاكر المكتملة والملغية</p>
             </div>
           </div>
         </div>
@@ -193,10 +193,10 @@ export default function ArchivePage() {
               {/* Timeframe Select */}
               <div className="w-full md:w-1/3 flex items-center gap-3">
                 <div className="w-12 h-12 rounded-2xl bg-zinc-900 border border-zinc-800 flex items-center justify-center shrink-0">
-                  <Filter className="w-5 h-5 text-blue-500" />
+                  <Filter className="w-5 h-5 text-amber-500" />
                 </div>
                 <Select value={timeFilter} onValueChange={(val: any) => setTimeFilter(val)}>
-                  <SelectTrigger className="w-full rounded-2xl h-14 bg-black/50 border-zinc-800 text-white focus:ring-blue-500 hover:border-zinc-700 font-bold">
+                  <SelectTrigger className="w-full rounded-2xl h-14 bg-black/50 border-zinc-800 text-white focus:ring-amber-500 hover:border-zinc-700 font-bold">
                     <SelectValue placeholder="اختر الفترة" />
                   </SelectTrigger>
                   <SelectContent className="bg-zinc-950 border-zinc-800 text-white rounded-xl">
@@ -211,14 +211,14 @@ export default function ArchivePage() {
               {/* Specific Date Select */}
               <div className={`w-full md:w-1/3 flex items-center gap-3 transition-opacity ${timeFilter === 'today' ? 'opacity-100' : 'opacity-50 pointer-events-none'}`}>
                 <div className="w-12 h-12 rounded-2xl bg-zinc-900 border border-zinc-800 flex items-center justify-center shrink-0">
-                  <Calendar className="w-5 h-5 text-blue-500" />
+                  <Calendar className="w-5 h-5 text-amber-500" />
                 </div>
                 <Input
                   type="date"
                   value={selectedDate}
                   onChange={(e) => setSelectedDate(e.target.value)}
                   disabled={timeFilter !== 'today'}
-                  className="flex-1 rounded-2xl h-14 bg-black/50 border-zinc-800 text-white focus-visible:ring-blue-500 transition-all hover:border-zinc-700"
+                  className="flex-1 rounded-2xl h-14 bg-black/50 border-zinc-800 text-white focus-visible:ring-amber-500 transition-all hover:border-zinc-700"
                 />
               </div>
 
@@ -243,23 +243,23 @@ export default function ArchivePage() {
             </CardContent>
           </Card>
           <Card className="rounded-[2rem] border border-zinc-800/50 bg-zinc-950/50 backdrop-blur-xl shadow-2xl overflow-hidden group">
-            <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+            <div className="absolute inset-0 bg-gradient-to-br from-amber-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
             <CardContent className="p-6 text-center relative z-10">
               <p className="text-zinc-500 font-medium text-sm mb-2">الإجمالي</p>
-              <p className="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-blue-600 drop-shadow-lg">{stats.total}</p>
+              <p className="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-blue-600 drop-shadow-lg">{stats.total}</p>
             </CardContent>
           </Card>
         </div>
 
         {/* Search */}
         <div className="relative mb-8 group">
-          <div className="absolute inset-0 bg-gradient-to-r from-blue-500/0 via-blue-500/5 to-blue-500/0 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity" />
-          <Search className="absolute right-5 top-1/2 -translate-y-1/2 w-6 h-6 text-zinc-500 group-hover:text-blue-500 transition-colors z-10" />
+          <div className="absolute inset-0 bg-gradient-to-r from-amber-500/0 via-blue-500/5 to-blue-500/0 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity" />
+          <Search className="absolute right-5 top-1/2 -translate-y-1/2 w-6 h-6 text-zinc-500 group-hover:text-amber-500 transition-colors z-10" />
           <Input
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="البحث بالاسم، رقم التذكرة، أو رقم الهاتف..."
-            className="relative rounded-2xl h-16 pr-14 bg-black/50 border-zinc-800 text-white placeholder:text-zinc-600 focus-visible:ring-blue-500 focus-visible:border-blue-500/50 transition-all hover:border-zinc-700 text-lg shadow-2xl"
+            className="relative rounded-2xl h-16 pr-14 bg-black/50 border-zinc-800 text-white placeholder:text-zinc-600 focus-visible:ring-amber-500 focus-visible:border-amber-500/50 transition-all hover:border-zinc-700 text-lg shadow-2xl"
           />
         </div>
 
@@ -277,7 +277,7 @@ export default function ArchivePage() {
             filteredTickets.map((ticket) => (
               <Card
                 key={ticket.id}
-                className="rounded-[2rem] border border-zinc-800 bg-black/40 backdrop-blur-sm hover:border-blue-500/30 transition-all hover:shadow-[0_0_20px_rgba(59,130,246,0.05)] group"
+                className="rounded-[2rem] border border-zinc-800 bg-black/40 backdrop-blur-sm hover:border-amber-500/30 transition-all hover:shadow-[0_0_20px_rgba(245,158,11,0.05)] group"
               >
                 <CardContent className="p-5 sm:p-6">
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 sm:gap-0">
@@ -289,7 +289,7 @@ export default function ArchivePage() {
                         <span className="text-2xl font-black">#{ticket.ticket_number}</span>
                       </div>
                       <div>
-                        <h4 className="font-bold text-xl text-white group-hover:text-blue-400 transition-colors">{ticket.customer_name}</h4>
+                        <h4 className="font-bold text-xl text-white group-hover:text-amber-400 transition-colors">{ticket.customer_name}</h4>
                         <div className="flex flex-wrap items-center gap-3 mt-2 text-sm text-zinc-500">
                           {ticket.barber_name ? (
                             <span className="flex items-center gap-1.5 bg-white/5 px-2 py-1 rounded-md truncate max-w-[200px]" title={ticket.barber_name}>
@@ -298,7 +298,7 @@ export default function ArchivePage() {
                             </span>
                           ) : (
                             <span className="flex items-center gap-1.5 bg-white/5 px-2 py-1 rounded-md">
-                              <User className="w-4 h-4 text-blue-400/70" />
+                              <User className="w-4 h-4 text-amber-400/70" />
                               {ticket.people_count} {ticket.people_count === 1 ? 'شخص' : 'أشخاص'}
                             </span>
                           )}
