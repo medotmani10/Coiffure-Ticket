@@ -178,6 +178,34 @@ export default function BarberDashboard() {
     }
   };
 
+  const handleCallSpecific = async (ticketId: string) => {
+    if (!shop?.id) return;
+    setActionLoading(true);
+    try {
+      const { data, error } = await supabase.rpc('barber_call_specific_ticket', { p_shop_id: shop.id, p_ticket_id: ticketId });
+      if (error) {
+        if (error.message.includes('already_serving')) {
+          toast.error('أنت تخدم زبوناً بالفعل. قم بإنهاء أو إلغاء التذكرة الحالية أولاً.');
+        } else if (error.message.includes('ticket_not_available')) {
+          toast.error('هذه التذكرة غير متاحة للنداء.');
+        } else {
+          toast.error('حدث خطأ');
+        }
+        return;
+      }
+
+      const row = (Array.isArray(data) ? data[0] : data) as NextTicketResult | undefined;
+      if (row?.ticket_id) {
+        toast.success(`تفضل الزبون: ${row.customer_name} — ${row.ticket_code ?? '#' + row.ticket_number}`);
+        await loadTickets();
+      }
+    } catch {
+      toast.error('حدث خطأ');
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
   const setStatus = async (status: 'completed' | 'canceled') => {
     if (!serving) return;
     setActionLoading(true);
@@ -384,8 +412,19 @@ export default function BarberDashboard() {
                         <div className="text-xs text-zinc-500 truncate max-w-[180px]">{t.customer_name}</div>
                       </div>
                     </div>
-                    <div className="text-xs text-zinc-600 font-bold">
-                      {new Date(t.created_at).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
+                    <div className="flex items-center gap-3">
+                      <div className="text-xs text-zinc-600 font-bold hidden sm:block">
+                        {new Date(t.created_at).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
+                      </div>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => handleCallSpecific(t.id)}
+                        disabled={actionLoading || !profile?.is_active}
+                        className="h-8 rounded-lg bg-amber-500/10 text-amber-500 hover:bg-amber-500 hover:text-black font-bold whitespace-nowrap"
+                      >
+                        استدعاء
+                      </Button>
                     </div>
                   </div>
                 ))}

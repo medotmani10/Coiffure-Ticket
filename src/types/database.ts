@@ -84,6 +84,19 @@ export interface Database {
         Returns: {
           ticket_id: string
           ticket_number: number
+          ticket_code: string | null
+          customer_name: string
+          people_count: number
+          barber_name: string | null
+          barber_id: string | null
+        }[]
+      }
+      barber_call_specific_ticket: {
+        Args: { p_shop_id: string, p_ticket_id: string }
+        Returns: {
+          ticket_id: string
+          ticket_number: number
+          ticket_code: string | null
           customer_name: string
           people_count: number
           barber_name: string | null
