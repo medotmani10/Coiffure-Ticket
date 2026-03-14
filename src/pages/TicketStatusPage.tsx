@@ -79,17 +79,26 @@ export default function TicketStatusPage() {
     };
 
     const calculatePeopleAhead = async (t: Ticket) => {
-        const { data, error } = await supabase.rpc('get_people_ahead', {
-            p_shop_id: t.shop_id,
-            p_created_at: t.created_at,
-        });
+        const barberId = (t as Ticket & { barber_id?: string | null }).barber_id;
+        if (!barberId) {
+            setPeopleAhead(0);
+            return;
+        }
+
+        const { data, error } = await supabase
+            .from('tickets')
+            .select('people_count')
+            .eq('shop_id', t.shop_id)
+            .eq('status', 'waiting')
+            .eq('barber_id', barberId)
+            .lt('created_at', t.created_at);
+
         if (!error) {
-            const count = data ?? 0;
+            const count = (data ?? []).reduce((acc: number, row: { people_count: number | null }) => acc + (row.people_count ?? 1), 0);
             setPeopleAhead(count);
 
-            // Notify if exactly 2 people ahead
             if (count === 2 && !notifiedTwoAheadRef.current) {
-                unlockAudio(); // Ensure audio context is ready
+                unlockAudio();
                 triggerSystemNotification(
                     "اقترب دورك!",
                     "يوجد شخصين فقط أمامك في الانتظار. يرجى التقدم إلى الصالون."

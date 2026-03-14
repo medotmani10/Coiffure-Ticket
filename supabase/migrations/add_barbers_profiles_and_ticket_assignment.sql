@@ -111,7 +111,7 @@ BEGIN
         RAISE EXCEPTION 'forbidden_ticket_update';
     END IF;
 
-    IF OLD.status = 'waiting' AND (OLD.barber_id IS NULL OR OLD.barber_id = auth.uid()) THEN
+    IF OLD.status = 'waiting' AND OLD.barber_id = auth.uid() THEN
         IF NEW.status <> 'serving' OR NEW.barber_id <> auth.uid() THEN
             RAISE EXCEPTION 'forbidden_ticket_transition';
         END IF;
@@ -161,6 +161,22 @@ CREATE POLICY "Barber can update own profile" ON public.profiles
     USING (id = auth.uid() AND role = 'barber')
     WITH CHECK (id = auth.uid() AND role = 'barber');
 
+DROP POLICY IF EXISTS "Public can read active barbers" ON public.profiles;
+CREATE POLICY "Public can read active barbers" ON public.profiles
+    FOR SELECT
+    USING (
+        role = 'barber'
+        AND is_active = true
+    );
+
+DROP POLICY IF EXISTS "Public can read active barbers" ON public.profiles;
+CREATE POLICY "Public can read active barbers" ON public.profiles
+    FOR SELECT
+    USING (
+        role = 'barber'
+        AND is_active = true
+    );
+
 DROP POLICY IF EXISTS "Barber can read active tickets" ON public.tickets;
 CREATE POLICY "Barber can read active tickets" ON public.tickets
     FOR SELECT
@@ -173,7 +189,7 @@ CREATE POLICY "Barber can read active tickets" ON public.tickets
               AND p.is_active = true
         )
         AND public.tickets.status IN ('waiting', 'serving')
-        AND (public.tickets.barber_id = auth.uid() OR public.tickets.barber_id IS NULL)
+        AND public.tickets.barber_id = auth.uid()
     );
 
 DROP POLICY IF EXISTS "Barber can claim or update assigned tickets" ON public.tickets;
@@ -187,7 +203,7 @@ CREATE POLICY "Barber can claim or update assigned tickets" ON public.tickets
               AND p.shop_id = public.tickets.shop_id
               AND p.is_active = true
         )
-        AND (public.tickets.barber_id = auth.uid() OR public.tickets.barber_id IS NULL)
+        AND public.tickets.barber_id = auth.uid()
     )
     WITH CHECK (
         EXISTS (
@@ -248,7 +264,7 @@ BEGIN
     FROM public.tickets t
     WHERE t.shop_id = p_shop_id
       AND t.status = 'waiting'
-      AND (t.barber_id = v_profile.id OR t.barber_id IS NULL)
+      AND t.barber_id = v_profile.id
     ORDER BY t.created_at ASC
     FOR UPDATE SKIP LOCKED
     LIMIT 1;

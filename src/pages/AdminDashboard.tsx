@@ -14,7 +14,6 @@ import { Plus, LogOut, Archive, Users, ChevronLeft, X, Loader2, CheckCircle, Set
 import { toast } from 'sonner';
 import { printThermalTicket } from '@/components/ThermalTicket';
 import { playTicketSound } from '@/lib/notificationSound';
-
 import { cn, getCustomerBaseUrl } from '@/lib/utils';
 
 /* ─── StatCard ─── */

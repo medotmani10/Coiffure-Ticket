@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { supabase, getOrCreateSessionId } from '@/lib/supabase';
-import type { Shop, Ticket } from '@/types/database';
+import type { Profile, Shop, Ticket } from '@/types/database';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -26,21 +26,8 @@ export default function CustomerBookingPage() {
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [peopleCount, setPeopleCount] = useState(1);
-  const [barberNames, setBarberNames] = useState<string[]>(['']);
-
-  useEffect(() => {
-    setBarberNames(prev => {
-      const newBarberNames = [...prev];
-      if (peopleCount > prev.length) {
-        for (let i = prev.length; i < peopleCount; i++) {
-          newBarberNames.push('');
-        }
-      } else if (peopleCount < prev.length) {
-        newBarberNames.length = peopleCount;
-      }
-      return newBarberNames;
-    });
-  }, [peopleCount]);
+  const [selectedBarberId, setSelectedBarberId] = useState<string>('');
+  const [barbers, setBarbers] = useState<Array<Pick<Profile, 'id' | 'full_name'> & { waitingPeople: number }>>([]);
 
   // Notification states and refs
   const { notificationPermission, requestNotificationPermission, triggerSystemNotification } = usePushSubscription(activeTicket?.id ?? null);
@@ -83,17 +70,57 @@ export default function CustomerBookingPage() {
       if (shopError || !shopData) { toast.error('المحطة غير موجودة'); navigate('/'); return; }
       setShop(shopData as Shop);
 
-      // Save the shop slug to localStorage for smart redirects
       localStorage.setItem('last_visited_shop', shopData.slug);
 
-      // Queue counts
-      const { data: waitingTickets } = await supabase.from('tickets').select('people_count').eq('shop_id', shopData.id).eq('status', 'waiting');
-      const count = (waitingTickets || []).reduce((acc: number, t: { people_count: number | null }) => acc + (t.people_count || 1), 0);
-      setQueueCount(count);
+      const { data: barberRows, error: barberErr } = await supabase
+        .from('profiles')
+        .select('id, full_name')
+        .eq('shop_id', shopData.id)
+        .eq('role', 'barber')
+        .eq('is_active', true)
+        .order('created_at', { ascending: true });
 
-      // Check for existing active ticket for this session
+      if (barberErr) {
+        toast.error('فشل تحميل قائمة الحلاقين');
+      }
+
+      const barberList = ((barberRows as Array<Pick<Profile, 'id' | 'full_name'>>) || []);
+
+      const { data: waitingTickets } = await supabase
+        .from('tickets')
+        .select('barber_id, people_count')
+        .eq('shop_id', shopData.id)
+        .eq('status', 'waiting');
+
+      const waitingMap = new Map<string, number>();
+      for (const row of (waitingTickets as Array<{ barber_id: string | null; people_count: number | null }>) || []) {
+        if (!row.barber_id) continue;
+        waitingMap.set(row.barber_id, (waitingMap.get(row.barber_id) ?? 0) + (row.people_count || 1));
+      }
+
+      const totalWaiting = Array.from(waitingMap.values()).reduce((acc, v) => acc + v, 0);
+      setQueueCount(totalWaiting);
+
+      const enriched = barberList.map((b) => ({
+        ...b,
+        waitingPeople: waitingMap.get(b.id) ?? 0,
+      }));
+      setBarbers(enriched);
+
+      if (!selectedBarberId && enriched.length > 0) {
+        setSelectedBarberId(enriched[0].id);
+      }
+
       const sessionId = getOrCreateSessionId();
-      const { data: ticketsData } = await supabase.from('tickets').select('*').eq('shop_id', shopData.id).eq('user_session_id', sessionId).in('status', ['waiting', 'serving']).order('created_at', { ascending: false }).limit(1);
+      const { data: ticketsData } = await supabase
+        .from('tickets')
+        .select('*')
+        .eq('shop_id', shopData.id)
+        .eq('user_session_id', sessionId)
+        .in('status', ['waiting', 'serving'])
+        .order('created_at', { ascending: false })
+        .limit(1);
+
       if (ticketsData && ticketsData.length > 0) {
         const ticket = ticketsData[0] as Ticket;
         setActiveTicket(ticket);
@@ -104,17 +131,26 @@ export default function CustomerBookingPage() {
   };
 
   const calculatePeopleAhead = async (ticket: Ticket) => {
-    const { data, error } = await supabase.rpc('get_people_ahead', {
-      p_shop_id: ticket.shop_id,
-      p_created_at: ticket.created_at,
-    });
+    const barberId = (ticket as Ticket & { barber_id?: string | null }).barber_id;
+    if (!barberId) {
+      setPeopleAhead(0);
+      return;
+    }
+
+    const { data, error } = await supabase
+      .from('tickets')
+      .select('people_count')
+      .eq('shop_id', ticket.shop_id)
+      .eq('status', 'waiting')
+      .eq('barber_id', barberId)
+      .lt('created_at', ticket.created_at);
+
     if (!error) {
-      const count = data ?? 0;
+      const count = (data || []).reduce((acc: number, t: { people_count: number | null }) => acc + (t.people_count || 1), 0);
       setPeopleAhead(count);
 
-      // Notify if exactly 2 people ahead
       if (count === 2 && !notifiedTwoAheadRef.current) {
-        unlockAudio(); // Ensure audio context is ready
+        unlockAudio();
         triggerSystemNotification(
           "اقترب دورك!",
           "يوجد شخصين فقط أمامك في الانتظار. يرجى التقدم إلى الصالون."
@@ -156,8 +192,7 @@ export default function CustomerBookingPage() {
     if (!shop) return;
     if (!name.trim() || !phone.trim()) { toast.error('يرجى ملء جميع الحقول'); return; }
     if (!/^0[567]\d{8}$/.test(phone.trim())) { toast.error('رقم الهاتف يجب أن يتكون من 10 أرقام ويبدأ بـ 05، 06 أو 07'); return; }
-
-    const finalBarberName = barberNames.filter(bn => bn.trim() !== '').join('، ');
+    if (!selectedBarberId) { toast.error('يرجى اختيار الحلاق'); return; }
 
     setSubmitting(true);
     try {
@@ -169,7 +204,7 @@ export default function CustomerBookingPage() {
         p_phone: phone.trim(),
         p_people: peopleCount,
         p_session_id: sessionId,
-        p_barber_name: finalBarberName || null,
+        p_barber_id: selectedBarberId,
       });
 
       if (error) {
@@ -337,28 +372,50 @@ export default function CustomerBookingPage() {
               </div>
             </div>
 
-            {/* Barber Names */}
-            {peopleCount > 0 && (
-              <div className="space-y-3 border-t border-zinc-800 pt-4 mt-2">
-                {barberNames.map((barberName, index) => (
-                  <div key={index} className="space-y-2">
-                    <Label className="flex items-center gap-2 text-zinc-300 text-sm font-bold">
-                      <Scissors className="w-4 h-4 text-amber-500" /> {peopleCount > 1 ? `اسم الحلاق (للشخص ${index + 1})` : 'اسم الحلاق (اختياري)'}
-                    </Label>
-                    <Input
-                      value={barberName}
-                      onChange={(e) => {
-                        const newBarberNames = [...barberNames];
-                        newBarberNames[index] = e.target.value;
-                        setBarberNames(newBarberNames);
-                      }}
-                      placeholder="أي حلاق متاح"
-                      className="rounded-xl h-12 bg-black border-zinc-700 focus-visible:ring-amber-500 text-white placeholder:text-zinc-600"
-                    />
-                  </div>
-                ))}
-              </div>
-            )}
+            {/* Barber cards (required) */}
+            <div className="space-y-3 border-t border-zinc-800 pt-4 mt-2">
+              <Label className="flex items-center gap-2 text-zinc-300 text-sm font-bold">
+                <Scissors className="w-4 h-4 text-amber-500" /> اختر الحلاق
+              </Label>
+
+              {barbers.length === 0 ? (
+                <div className="rounded-xl border border-dashed border-zinc-800 bg-black/30 p-6 text-center text-zinc-500 text-sm font-semibold">
+                  لا يوجد حلاقون متاحون حالياً
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {barbers.map((b) => {
+                    const isSelected = selectedBarberId === b.id;
+                    return (
+                      <button
+                        key={b.id}
+                        type="button"
+                        onClick={() => setSelectedBarberId(b.id)}
+                        className={
+                          "rounded-2xl border p-4 text-right transition-all active:scale-[0.99] " +
+                          (isSelected
+                            ? "border-amber-500/50 bg-amber-500/10 shadow-[0_0_0_1px_rgba(245,158,11,0.15)]"
+                            : "border-zinc-800 bg-black/40 hover:border-amber-500/30 hover:bg-zinc-900/40")
+                        }
+                      >
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="min-w-0">
+                            <div className="font-black text-white truncate">{b.full_name || 'حلاق'}</div>
+                            <div className="text-xs text-zinc-500 font-semibold mt-1">في الانتظار: {b.waitingPeople} شخص</div>
+                          </div>
+                          <div className={
+                            "shrink-0 rounded-xl px-3 py-1 text-xs font-black border " +
+                            (isSelected ? "bg-amber-500 text-black border-amber-400" : "bg-zinc-900 text-zinc-200 border-zinc-800")
+                          }>
+                            {isSelected ? 'محدد' : 'اختيار'}
+                          </div>
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
 
             {/* Submit */}
             <Button type="submit"
