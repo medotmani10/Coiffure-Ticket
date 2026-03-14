@@ -247,8 +247,8 @@ export default function AdminDashboard() {
   const toggleShopStatus = async () => {
     if (!shop) return;
     const { error } = await supabase.from('shops').update({ is_open: !shop.is_open }).eq('id', shop.id);
-    if (error) toast.error('فشل تحديث حالة المحطة');
-    else { setShop({ ...shop, is_open: !shop.is_open }); toast.success(shop.is_open ? 'تم إغلاق المحطة' : 'تم فتح المحطة'); }
+    if (error) toast.error('فشل تحديث حالة المحل');
+    else { setShop({ ...shop, is_open: !shop.is_open }); toast.success(shop.is_open ? 'تم إغلاق المحل' : 'تم فتح المحل'); }
   };
 
   const handleManualTicket = async (e: React.FormEvent) => {
@@ -279,7 +279,7 @@ export default function AdminDashboard() {
     });
 
     if (error) {
-      if (error.message.includes('shop_closed')) toast.error('المحطة مغلقة حالياً');
+      if (error.message.includes('shop_closed')) toast.error('المحل مغلق حالياً');
       else if (error.message.includes('invalid_barber')) toast.error('الحلاق المختار غير صالح');
       else toast.error(error.message || 'فشل في إنشاء التذكرة');
       return;
@@ -634,7 +634,7 @@ export default function AdminDashboard() {
                     : 'text-zinc-500 bg-zinc-800 cursor-not-allowed opacity-80'
                 )}>
                 <Plus className="w-6 h-6" />
-                {shop.is_open ? 'إضافة زبون يدوياً' : 'المحطة مغلقة'}
+                {shop.is_open ? 'إضافة زبون يدوياً' : 'المحل مغلق'}
               </button>
             </SheetTrigger>
             <SheetContent side="bottom" className="rounded-t-[2rem] h-auto max-h-[92vh] bg-zinc-950 border-zinc-800 p-6" dir="rtl">

@@ -15,6 +15,7 @@ import CustomerInstallPrompt from '@/components/CustomerInstallPrompt';
 import CustomerRootRedirect from '@/components/CustomerRootRedirect';
 import BarberLoginPage from '@/pages/BarberLoginPage';
 import BarberDashboard from '@/pages/BarberDashboard';
+import BarberInstallPrompt from '@/components/BarberInstallPrompt';
 
 function App() {
   const hostname = window.location.hostname;
@@ -76,6 +77,7 @@ function App() {
             <Route path="/barber/:shopSlug" element={<BarberDashboard />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
+          <BarberInstallPrompt />
           <Toaster position="top-center" richColors />
         </div>
       </BrowserRouter>

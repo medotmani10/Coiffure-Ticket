@@ -226,7 +226,7 @@ export default function AdminSettingsPage() {
 
     const saveShopSettings = async () => {
         if (!shop || !shopName.trim()) {
-            toast.error('يرجى إدخال اسم المحطة');
+            toast.error('يرجى إدخال اسم المحل');
             return;
         }
 
@@ -254,12 +254,12 @@ export default function AdminSettingsPage() {
 
             if (error) {
                 if (error.code === '23505') {
-                    toast.error('اسم المحطة مستخدم بالفعل، يرجى اختيار اسم آخر');
+                    toast.error('اسم المحل مستخدم بالفعل، يرجى اختيار اسم آخر');
                 } else {
                     toast.error('فشل حفظ الإعدادات');
                 }
             } else {
-                toast.success('تم حفظ إعدادات المحطة بنجاح');
+                toast.success('تم حفظ إعدادات المحل بنجاح');
                 // Refresh data
                 loadData();
             }
@@ -305,7 +305,7 @@ export default function AdminSettingsPage() {
                     <TabsList className="w-full bg-black/40 border border-zinc-800/80 rounded-2xl p-1 h-12">
                         <TabsTrigger value="shop" className="rounded-xl font-black text-sm data-[state=active]:bg-amber-600 data-[state=active]:text-black">
                             <Scissors className="w-4 h-4" />
-                            إعدادات المحطة
+                            إعدادات المحل
                         </TabsTrigger>
                         <TabsTrigger value="barbers" className="rounded-xl font-black text-sm data-[state=active]:bg-amber-600 data-[state=active]:text-black">
                             <Users className="w-4 h-4" />
@@ -319,7 +319,7 @@ export default function AdminSettingsPage() {
                             <CardHeader className="border-b border-zinc-800/80 pb-6">
                                 <CardTitle className="flex items-center gap-3 text-2xl text-white">
                                     <Scissors className="w-7 h-7 text-amber-500" />
-                                    معلومات المحطة الأساسية
+                                    معلومات المحل الأساسية
                                 </CardTitle>
                             </CardHeader>
                             <CardContent className="p-8 space-y-8 relative z-10">
@@ -346,17 +346,17 @@ export default function AdminSettingsPage() {
                                         />
                                     </div>
                                     <div className="flex-1 text-center sm:text-right">
-                                        <h3 className="text-lg font-bold text-white mb-2">شعار المحطة</h3>
-                                        <p className="text-zinc-500 text-sm">اختر صورة واضحة ومميزة لمحطتك. يفضل أن تكون بخلفية شفافة (PNG).</p>
+                                        <h3 className="text-lg font-bold text-white mb-2">شعار المحل</h3>
+                                        <p className="text-zinc-500 text-sm">اختر صورة واضحة ومميزة لمحلك. يفضل أن تكون بخلفية شفافة (PNG).</p>
                                     </div>
                                 </div>
 
                                 <div className="space-y-4">
-                                    <Label className="text-zinc-300 font-medium text-base ml-2">اسم المحطة</Label>
+                                    <Label className="text-zinc-300 font-medium text-base ml-2">اسم المحل</Label>
                                     <Input
                                         value={shopName}
                                         onChange={(e) => setShopName(e.target.value)}
-                                        placeholder="اسم المحطة..."
+                                        placeholder="اسم المحل..."
                                         className="rounded-2xl h-14 bg-black/50 border-zinc-800 focus-visible:ring-amber-500 focus-visible:border-amber-500/50 text-white placeholder:text-zinc-700 text-lg transition-all hover:border-zinc-700"
                                     />
                                 </div>
@@ -377,7 +377,7 @@ export default function AdminSettingsPage() {
 
                                 <div className="space-y-4">
                                     <Label className="text-zinc-300 font-medium text-base ml-2 flex items-center gap-2">
-                                        رقم هاتف المحطة
+                                        رقم هاتف المحل
                                         <Smartphone className="w-4 h-4 text-amber-500" />
                                     </Label>
                                     <Input

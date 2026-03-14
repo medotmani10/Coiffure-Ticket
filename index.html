@@ -9,8 +9,7 @@
   <link
     href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Noto+Kufi+Arabic:wght@400;500;600;700;800;900&family=Cairo:wght@400;500;600;700;800;900&display=swap"
     rel="stylesheet">
-  <meta name="description"
-    content="نظام رقمي لقوائم الانتظار في صالون الحلاقة — زبائنك يعرفون دورهم من هواتفهم" />
+  <meta name="description" content="نظام رقمي لقوائم الانتظار في صالون الحلاقة — زبائنك يعرفون دورهم من هواتفهم" />
   <meta name="theme-color" content="#2c1e16" />
   <link id="app-icon" rel="icon" type="image/png" href="/app-icon.png" />
   <link id="app-apple-icon" rel="apple-touch-icon" href="/app-icon.png">
@@ -35,6 +34,7 @@
       let manifestUrl = null;
       if (isSuperAdmin) manifestUrl = '/manifest-superadmin.json';
       else if (isAdmin) manifestUrl = '/manifest-admin.json';
+      else if (hostname.includes('coiffure-coiffureticket') && !isAdmin && !isSuperAdmin) manifestUrl = '/manifest-barber.json';
       else if (hostname.includes('costumer') || hostname.includes('customer')) manifestUrl = '/manifest-customer.json';
 
       // Only inject manifest if we have a specific URL (subdomains)

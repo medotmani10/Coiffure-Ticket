@@ -19,6 +19,8 @@ export default function OnboardingPage() {
   const [logoFile, setLogoFile] = useState<File | null>(null);
   const [logoPreview, setLogoPreview] = useState<string | null>(null);
   const [currentUser, setCurrentUser] = useState<SupabaseUser | null>(null);
+  const [barberName, setBarberName] = useState('');
+  const [barberPassword, setBarberPassword] = useState('');
 
   useEffect(() => {
     checkAuth();
@@ -137,7 +139,62 @@ export default function OnboardingPage() {
         return;
       }
 
-      toast.success('تم إنشاء المحطة بنجاح!');
+      // 2. Create barber account using temp client to avoid logging out the current owner
+      const hexName = Array.from(new TextEncoder().encode(barberName.trim()))
+        .map((b) => b.toString(16).padStart(2, '0'))
+        .join('');
+      const pseudoEmail = `${hexName}@${slug}.com`;
+
+      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL as string | undefined;
+      const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY as string | undefined;
+      if (!supabaseUrl || !supabaseAnonKey) {
+        toast.error('إعدادات قاعدة البيانات غير مكتملة');
+        setLoading(false);
+        return;
+      }
+
+      // createClient dynamically imported to avoid circular dependencies if any, but since we have it natively we can use a fresh instance:
+      const { createClient } = await import('@supabase/supabase-js');
+      const tempClient = createClient(
+        supabaseUrl,
+        supabaseAnonKey,
+        { auth: { persistSession: false, autoRefreshToken: false } }
+      );
+
+      const { data: signUpData, error: signUpError } = await tempClient.auth.signUp({
+        email: pseudoEmail,
+        password: barberPassword,
+      });
+
+      if (signUpError || !signUpData.user) {
+        // We still created the shop, but barber failed. We should alert.
+        toast.error('تم إنشاء المحل بنجاح، لكن فشل إنشاء حساب الحلاق التلقائي. يرجى إضافته من الإعدادات لاحقاً.');
+        navigate('/admin');
+        return;
+      }
+
+      const barberUserId = signUpData.user.id;
+      const shopId = shopError ? null : (await supabase.from('shops').select('id').eq('owner_id', currentUser.id).single()).data?.id;
+
+      if (shopId) {
+        const { error: profileError } = await supabase
+          .from('profiles')
+          .insert({
+            id: barberUserId,
+            shop_id: shopId,
+            role: 'barber',
+            full_name: barberName.trim(),
+            is_active: true,
+          });
+
+        if (profileError) {
+          toast.error('حدث خطأ أثناء ربط الحلاق بالمحل الجديد');
+        }
+      }
+
+      await tempClient.auth.signOut();
+
+      toast.success('تم إنشاء المحل وحساب الحلاق بنجاح!');
       navigate('/admin');
     } catch {
       toast.error('حدث خطأ غير متوقع');
@@ -162,7 +219,7 @@ export default function OnboardingPage() {
             <Scissors className="w-8 h-8 text-white" />
           </div>
           <h1 className="text-3xl font-black text-white tracking-tight">Coiffure <span className="text-amber-500">Ticket</span></h1>
-          <p className="text-zinc-500 mt-2 font-medium">ابدأ رحلة محطتك الرقمية الآن</p>
+          <p className="text-zinc-500 mt-2 font-medium">ابدأ رحلة محلك الرقمية الآن</p>
         </div>
 
         <div className="bg-zinc-900/50 backdrop-blur-xl border border-zinc-800/50 rounded-[2.5rem] shadow-2xl overflow-hidden relative animate-in fade-in slide-in-from-bottom-4 duration-700">
@@ -171,7 +228,7 @@ export default function OnboardingPage() {
           <div className="p-8 sm:p-10 space-y-6">
             <div className="text-center mb-10">
               <h2 className="text-2xl font-black text-white mb-2 tracking-tight">
-                معلومات المحطة
+                معلومات المحل
               </h2>
               <p className="text-zinc-500 text-sm font-medium">
                 أدخل التفاصيل الأساسية لإنشاء هويتك الرقمية
@@ -181,7 +238,7 @@ export default function OnboardingPage() {
             <div className="space-y-3">
               <Label className="flex items-center gap-2 text-zinc-400 font-bold mr-1">
                 <Store className="w-4 h-4 text-amber-500" />
-                اسم المحطة
+                اسم المحل
               </Label>
               <Input
                 value={shopName}
@@ -208,7 +265,7 @@ export default function OnboardingPage() {
             <div className="space-y-3">
               <Label className="flex items-center gap-2 text-zinc-400 font-bold mr-1">
                 <Smartphone className="w-4 h-4 text-amber-500" />
-                رقم هاتف المحطة (اختياري)
+                رقم هاتف المحل (اختياري)
               </Label>
               <Input
                 value={shopPhone}
@@ -223,7 +280,7 @@ export default function OnboardingPage() {
             <div className="space-y-3">
               <Label className="flex items-center gap-2 text-zinc-400 font-bold mr-1">
                 <Upload className="w-4 h-4 text-amber-500" />
-                شعار المحطة (اختياري)
+                شعار المحل (اختياري)
               </Label>
               <div className="flex items-center gap-4">
                 <label className="flex-1 group">
@@ -249,10 +306,47 @@ export default function OnboardingPage() {
               </div>
             </div>
 
+            <div className="w-full h-[1px] bg-zinc-800/50 my-8"></div>
+
+            <div className="text-center mb-6">
+              <h3 className="text-xl font-black text-white mb-2 tracking-tight">
+                حساب الحلاق الأول
+              </h3>
+              <p className="text-zinc-500 text-sm font-medium">
+                يجب إضافة حلاق واحد على الأقل ليتمكن الزبائن من الحجز لديه
+              </p>
+            </div>
+
+            <div className="space-y-3">
+              <Label className="flex items-center gap-2 text-zinc-400 font-bold mr-1">
+                اسم الحلاق
+              </Label>
+              <Input
+                value={barberName}
+                onChange={(e) => setBarberName(e.target.value)}
+                placeholder="مثال: أيوب"
+                className="rounded-2xl h-14 bg-black/50 border-zinc-800 text-white focus-visible:ring-amber-500 placeholder:text-zinc-600 text-lg"
+              />
+            </div>
+
+            <div className="space-y-3">
+              <Label className="flex items-center gap-2 text-zinc-400 font-bold mr-1">
+                كلمة المرور
+              </Label>
+              <Input
+                value={barberPassword}
+                onChange={(e) => setBarberPassword(e.target.value)}
+                placeholder="••••••"
+                type="password"
+                className="rounded-2xl h-14 bg-black/50 border-zinc-800 text-white focus-visible:ring-amber-500 placeholder:text-zinc-600 text-left"
+                dir="ltr"
+              />
+            </div>
+
             <Button
               onClick={handleSubmit}
               className="w-full rounded-2xl h-16 bg-amber-600 hover:bg-amber-500 text-white text-xl font-black mt-8 shadow-[0_10px_20px_rgba(217,119,6,0.15)] transition-all hover:scale-[1.02]"
-              disabled={!shopName.trim() || loading}
+              disabled={!shopName.trim() || !barberName.trim() || !barberPassword.trim() || loading}
             >
               {loading ? (
                 <div className="flex items-center gap-2">
@@ -260,7 +354,7 @@ export default function OnboardingPage() {
                 </div>
               ) : (
                 <div className="flex items-center gap-2">
-                  إنشاء المحطة
+                  إنشاء المحل
                   <Check className="w-6 h-6 mr-1" />
                 </div>
               )}
