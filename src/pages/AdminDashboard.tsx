@@ -280,7 +280,8 @@ export default function AdminDashboard() {
 
     if (error) {
       if (error.message.includes('shop_closed')) toast.error('المحطة مغلقة حالياً');
-      else toast.error('فشل في إنشاء التذكرة');
+      else if (error.message.includes('invalid_barber')) toast.error('الحلاق المختار غير صالح');
+      else toast.error(error.message || 'فشل في إنشاء التذكرة');
       return;
     }
 
