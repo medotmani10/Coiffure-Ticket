@@ -18,18 +18,18 @@ export default defineConfig({
       injectManifest: {
         injectionPoint: undefined
       },
-      includeAssets: ['pwa-icon.svg'],
+      includeAssets: ['pwa-icon.png'],
       manifest: {
         name: "CoiffureTicket",
         short_name: "CoiffureTicket",
-        theme_color: "#000000",
-        background_color: "#000000",
+        theme_color: "#2c1e16",
+        background_color: "#2c1e16",
         display: "standalone",
         icons: [
           {
-            src: "/pwa-icon.svg",
+            src: "/pwa-icon.png",
             sizes: "192x192 512x512",
-            type: "image/svg+xml",
+            type: "image/png",
             purpose: "any maskable"
           }
         ]

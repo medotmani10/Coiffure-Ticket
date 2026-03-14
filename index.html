@@ -10,11 +10,11 @@
     href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Noto+Kufi+Arabic:wght@400;500;600;700;800;900&family=Cairo:wght@400;500;600;700;800;900&display=swap"
     rel="stylesheet">
   <meta name="description"
-    content="نظام رقمي لقوائم الانتظار في محطات غسيل السيارات — زبائنك يعرفون دورهم من هواتفهم" />
-  <meta name="theme-color" content="#09090b" />
+    content="نظام رقمي لقوائم الانتظار في صالون الحلاقة — زبائنك يعرفون دورهم من هواتفهم" />
+  <meta name="theme-color" content="#2c1e16" />
   <link id="app-icon" rel="icon" type="image/png" href="/app-icon.png" />
   <link id="app-apple-icon" rel="apple-touch-icon" href="/app-icon.png">
-  <title id="app-title">Lavage Ticket — نظام طابور غسيل السيارات</title>
+  <title id="app-title">Coiffure Ticket — نظام طابور صالون الحلاقة</title>
 
   <script>
     window.addEventListener('DOMContentLoaded', function () {
@@ -25,10 +25,10 @@
       // Update Title
       if (isSuperAdmin) {
         const titleEl = document.getElementById('app-title');
-        if (titleEl) titleEl.textContent = 'Lavage Control — الإدارة العامة';
+        if (titleEl) titleEl.textContent = 'Coiffure Control — الإدارة العامة';
       } else if (isAdmin) {
         const titleEl = document.getElementById('app-title');
-        if (titleEl) titleEl.textContent = 'Lavage Station — لوحة الإدارة';
+        if (titleEl) titleEl.textContent = 'Coiffure Admin — لوحة الإدارة';
       }
 
       // Update Manifest
