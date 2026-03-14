@@ -81,7 +81,7 @@ BEGIN
         END IF;
 
         -- Determine barber's alphabetical letter (A=1st created, B=2nd, ...)
-        SELECT chr(64 + rn)
+        SELECT chr(64 + rn::integer)
         INTO v_barber_letter
         FROM (
             SELECT id, row_number() OVER (ORDER BY created_at ASC) AS rn

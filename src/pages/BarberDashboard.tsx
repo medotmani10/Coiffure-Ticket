@@ -3,9 +3,13 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import type { Profile, Shop, Ticket } from '@/types/database';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
-import { Loader2, LogOut, User, Scissors, XCircle, CheckCircle, ChevronLeft } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Loader2, LogOut, User, Scissors, XCircle, CheckCircle, ChevronLeft, Plus, Phone, Users } from 'lucide-react';
 import { toast } from 'sonner';
+import { printThermalTicket } from '@/components/ThermalTicket';
 
 type NextTicketResult = {
   ticket_id: string;
@@ -27,6 +31,13 @@ export default function BarberDashboard() {
   const [shop, setShop] = useState<Shop | null>(null);
   const [serving, setServing] = useState<Ticket | null>(null);
   const [waitingAssigned, setWaitingAssigned] = useState<Ticket[]>([]);
+
+  // Manual ticket state
+  const [showManualTicket, setShowManualTicket] = useState(false);
+  const [manualName, setManualName] = useState('');
+  const [manualPhone, setManualPhone] = useState('');
+  const [manualPeople, setManualPeople] = useState(1);
+  const [creatingTicket, setCreatingTicket] = useState(false);
 
   const barberDisplayName = useMemo(() => {
     if (!profile) return '';
@@ -189,6 +200,65 @@ export default function BarberDashboard() {
     }
   };
 
+  const handleManualTicket = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!shop || !profile) return;
+
+    const customerLabel = manualName.trim() || 'زبون غير مسجل';
+    if (manualPhone.trim() && !/^0[567]\d{8}$/.test(manualPhone.trim())) {
+      toast.error('رقم الهاتف يجب أن يتكون من 10 أرقام ويبدأ بـ 05، 06 أو 07');
+      return;
+    }
+
+    setCreatingTicket(true);
+    try {
+      const { data: ticketData, error } = await supabase.rpc('create_ticket', {
+        p_shop_id: shop.id,
+        p_name: customerLabel,
+        p_phone: manualPhone.trim() || '',
+        p_people: manualPeople,
+        p_session_id: `manual_${Date.now()}`,
+        p_barber_id: profile.id,
+      });
+
+      if (error) {
+        if (error.message.includes('shop_closed')) toast.error('المحل مغلق حالياً');
+        else toast.error(error.message || 'فشل في إنشاء التذكرة');
+        return;
+      }
+
+      const inserted = (Array.isArray(ticketData) ? ticketData[0] : ticketData) as Ticket;
+      const ticketCode = inserted.ticket_code ?? `#${inserted.ticket_number}`;
+      toast.success(`تم إنشاء التذكرة ${ticketCode}`);
+
+      // Calculate people waiting ahead (before this ticket)
+      const peopleAheadCount = waitingAssigned.reduce((acc, t) => acc + (t.people_count || 1), 0);
+
+      printThermalTicket({
+        ticketNumber: inserted.ticket_number,
+        ticketCode: inserted.ticket_code ?? undefined,
+        ticketId: inserted.id,
+        customerName: inserted.customer_name || customerLabel,
+        barberName: profile.full_name || undefined,
+        shopName: shop.name || '',
+        shopSlug: shop.slug || '',
+        peopleCount: inserted.people_count || manualPeople,
+        peopleAhead: peopleAheadCount,
+        createdAt: new Date(inserted.created_at || new Date().toISOString()),
+      });
+
+      setShowManualTicket(false);
+      setManualName('');
+      setManualPhone('');
+      setManualPeople(1);
+      await loadTickets();
+    } catch {
+      toast.error('حدث خطأ غير متوقع');
+    } finally {
+      setCreatingTicket(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-[100dvh] bg-black flex items-center justify-center">
@@ -324,6 +394,104 @@ export default function BarberDashboard() {
           </aside>
         </div>
       </main>
+
+      {/* Floating Add Ticket Button */}
+      <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50">
+        <Button
+          onClick={() => setShowManualTicket(true)}
+          disabled={!profile?.is_active || !shop?.is_open}
+          className="rounded-2xl h-14 px-8 bg-amber-600 hover:bg-amber-500 text-black font-black text-lg shadow-[0_0_30px_rgba(217,119,6,0.4)] focus-visible:ring-amber-500 disabled:opacity-40"
+        >
+          <Plus className="w-5 h-5 ml-2" />
+          تذكرة يدوية
+        </Button>
+      </div>
+
+      {/* Manual Ticket Dialog */}
+      <Dialog open={showManualTicket} onOpenChange={(open) => !open && setShowManualTicket(false)}>
+        <DialogContent className="sm:max-w-md bg-zinc-950 border-zinc-800 text-white p-6 rounded-3xl" dir="rtl">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-black text-white flex items-center gap-2">
+              <Scissors className="w-5 h-5 text-amber-500" />
+              إضافة تذكرة يدوية
+            </DialogTitle>
+          </DialogHeader>
+
+          <form onSubmit={handleManualTicket} className="space-y-4 pt-2">
+            {/* Customer name */}
+            <div className="space-y-2">
+              <Label className="text-zinc-300 font-bold flex items-center gap-2">
+                <User className="w-4 h-4 text-amber-500" />
+                اسم الزبون (اختياري)
+              </Label>
+              <Input
+                value={manualName}
+                onChange={(e) => setManualName(e.target.value)}
+                placeholder="محمد أحمد"
+                className="rounded-xl h-12 bg-black border-zinc-700 text-white focus-visible:ring-amber-500 placeholder:text-zinc-600"
+              />
+            </div>
+
+            {/* Phone */}
+            <div className="space-y-2">
+              <Label className="text-zinc-300 font-bold flex items-center gap-2">
+                <Phone className="w-4 h-4 text-amber-500" />
+                رقم الهاتف (اختياري)
+              </Label>
+              <Input
+                value={manualPhone}
+                onChange={(e) => setManualPhone(e.target.value)}
+                placeholder="05xxxxxxxx"
+                dir="ltr"
+                type="tel"
+                className="rounded-xl h-12 bg-black border-zinc-700 text-white focus-visible:ring-amber-500 placeholder:text-zinc-600 text-left"
+              />
+            </div>
+
+            {/* People count */}
+            <div className="flex items-center justify-between border-t border-zinc-800 pt-4">
+              <Label className="text-zinc-300 font-bold flex items-center gap-2">
+                <Users className="w-4 h-4 text-amber-500" />
+                عدد الأشخاص
+              </Label>
+              <div className="flex bg-black rounded-xl border border-zinc-700 overflow-hidden">
+                <button type="button" onClick={() => setManualPeople(Math.max(1, manualPeople - 1))} className="w-10 h-10 flex items-center justify-center text-zinc-400 hover:bg-zinc-800 hover:text-white transition-colors font-bold text-lg">-</button>
+                <div className="w-10 h-10 flex items-center justify-center font-black text-white border-x border-zinc-700">{manualPeople}</div>
+                <button type="button" onClick={() => setManualPeople(manualPeople + 1)} className="w-10 h-10 flex items-center justify-center text-zinc-400 hover:bg-zinc-800 hover:text-white transition-colors font-bold text-lg">+</button>
+              </div>
+            </div>
+
+            {/* Barber info (read-only) */}
+            <div className="rounded-xl bg-black/50 border border-zinc-800 p-3 flex items-center gap-3">
+              <div className="w-9 h-9 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center shrink-0">
+                <Scissors className="w-4 h-4 text-amber-500" />
+              </div>
+              <div>
+                <div className="text-xs text-zinc-500">سيتم ربط التذكرة بـ</div>
+                <div className="text-white font-black">{profile?.full_name || 'حلاق'}</div>
+              </div>
+            </div>
+
+            <div className="flex gap-3 pt-2">
+              <Button
+                type="submit"
+                disabled={creatingTicket}
+                className="flex-1 rounded-xl h-12 bg-amber-600 hover:bg-amber-500 text-black font-black text-lg"
+              >
+                {creatingTicket ? <Loader2 className="w-5 h-5 animate-spin" /> : 'إنشاء وطباعة'}
+              </Button>
+              <Button
+                type="button"
+                variant="ghost"
+                onClick={() => setShowManualTicket(false)}
+                className="flex-1 rounded-xl h-12 text-zinc-400 hover:text-white hover:bg-zinc-900 font-bold"
+              >
+                إلغاء
+              </Button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
